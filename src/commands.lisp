@@ -30,6 +30,11 @@ resulting S-Expression."
               (error 'invalid-input :input input)))
         (error 'invalid-input :input input))))
 
+(defun create-command (input)
+     (cond
+       ((eql (char input 0) #\w)) (create-add-weight-command input)
+       (t (error invalid-input :input input))))
+
 (defgeneric execute (c)
   (:documentation "Executes the user-specified command."))
 
