@@ -3,6 +3,8 @@
 (defvar *log* nil
   "The log holding all our log entries.")
 
+(defvar *log-file* "~/.jada/jada.log")
+
 (defclass log-entry ()
   ((weight   :accessor weight   :initarg :weight)
    (protocol :accessor protocol :initarg :protocol)
@@ -33,3 +35,17 @@
         (progn
           (push (make-instance 'log-entry :date (current-date)) *log*)
           (most-recent-log-entry)))))
+
+(defun save-log ()
+  "Saves the log to disk"
+  (ensure-directories-exist "~/.jada/" :verbose nil)
+  (with-open-file (out *log-file* :direction :output :if-exists :supersede)
+    (with-standard-io-syntax
+      (print *log* out))))
+
+(defun load-log ()
+  "Loads the log from disk"
+  (with-open-file (in *log-file* :if-does-not-exist nil)
+    (when in
+      (with-standard-io-syntax
+       (setf *log* (read in))))))

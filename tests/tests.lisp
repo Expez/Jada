@@ -13,6 +13,6 @@
 
 (test create-log-weight-command
       (let ((cmd (jada::create-log-weight-command "weight 83")))
-        (is (= (slot-value cmd 'jada::weight) 83))))
+        (is (= (jada::weight cmd) 83))))
 
 (run!)
