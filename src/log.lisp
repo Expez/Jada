@@ -19,9 +19,17 @@
     (declare (ignore s m h))
     (list :day day :month month :year year)))
 
-(defun latest-log-entry ()
+(defun most-recent-log-entry ()
   (first *log*))
 
 (defun add-log-entry (entry)
   (push entry *log*))
 
+(defun today ()
+  "Returns the log entry matching today"
+  (with-slots (date) (most-recent-log-entry)
+    (if (equal date (current-date))
+        (most-recent-log-entry)
+        (progn
+          (push (make-instance 'log-entry :date (current-date)) *log*)
+          (most-recent-log-entry)))))

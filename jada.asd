@@ -10,6 +10,8 @@
     :depends-on (:cl-ppcre)
     :components ((:file "package")
                  (:file "jada")
+                 (:file "log")
+                 (:file "food")
                  (:file "commands"))
       :in-order-to ((test-op (load-op :jada-tests)))
       :perform (test-op :after (op c)
@@ -21,7 +23,6 @@
     :version "0.0.0"
     :license "BSD"
     :description "Tests for jada"
-    :serial t
     :depends-on (:fiveam)
     :pathname "tests"
     :components ((:file "tests")))

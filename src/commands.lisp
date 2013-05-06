@@ -32,7 +32,7 @@ resulting S-Expression."
 
 (defun create-command (input)
      (cond
-       ((eql (char input 0) #\w)) (create-add-weight-command input)
+       ((eql (char input 0) #\w)) (create-log-weight-command input)
        (t (error invalid-input :input input))))
 
 (defgeneric execute (c)
