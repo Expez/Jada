@@ -7,7 +7,7 @@
     :description "jada is just another diet aid."
     :serial t
     :pathname "src"
-    :depends-on (:cl-ppcre)
+    :depends-on (:cl-ppcre :alexandria)
     :components ((:file "package")
                  (:file "jada")
                  (:file "log")

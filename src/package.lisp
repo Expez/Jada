@@ -1,2 +1,2 @@
 (defpackage :jada
-  (:use #:cl))
+  (:use #:cl #:alexandria))
