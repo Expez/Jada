@@ -30,13 +30,32 @@ resulting S-Expression."
               (error 'invalid-input :input input)))
         (error 'invalid-input :input input))))
 
+(defun create-add-food-command (input)
+  (let ((tokens (tokenize input)))
+    (if (= (length tokens) 5)
+        (progn
+          (mapc #'safely-read-from-string tokens)
+          (if-let ((name (first tokens))
+                   (kcal (second tokens))
+                   (prot (third tokens))
+                   (fat (fourth tokens))
+                   (carbs (fifth tokens)))
+            (make-instance 'food :name name :kcal kcal
+                           :prot prot :fat fat :carbs carbs)
+            (error 'invalid-input :input input)))
+        (error 'invalid-input :input input))))
+
 (defun create-command (input)
-     (cond
-       ((eql (char input 0) #\w)) (create-log-weight-command input)
-       (t (error invalid-input :input input))))
+  (cond
+    ((eql (char input 0) #\w) (create-log-weight-command input))
+    ((eql (char input 0) #\f) (create-add-food-command input))
+    (t (error 'invalid-input :input input))))
 
 (defgeneric execute (c)
   (:documentation "Executes the user-specified command."))
 
-(defmethod execute ((log-weight command))
-  )
+(defmethod execute ((log-weight-command command))
+  (with-accessors ((new-weight weight)) log-weight-command
+    (setf (weight today) new-weight))
+  (save-log))
+

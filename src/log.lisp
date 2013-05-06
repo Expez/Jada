@@ -29,7 +29,7 @@
 
 (defun today ()
   "Returns the log entry matching today"
-  (with-slots (date) (most-recent-log-entry)
+  (with-accessors ((date date)) (most-recent-log-entry)
     (if (equal date (current-date))
         (most-recent-log-entry)
         (progn
