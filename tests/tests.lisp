@@ -11,8 +11,8 @@
 
 (in-suite jada)
 
-(test parse-input
-  "Test the parse-input function."
-      (multiple-value-bind (fn args) (jada::parse-input "w 83")
-        (is (eq fn #'jada::weight))
-        (is (= 83 (car args)))))
+(test create-log-weight-command
+      (let ((cmd (jada::create-log-weight-command "weight 83")))
+        (is (= (slot-value cmd 'jada::weight) 83))))
+
+(run!)

@@ -1,19 +1,23 @@
 (in-package :jada)
 
-(defun parse-input (input)
-  "Parse user input and return a function and the arguments given."
-  (let ((tokens (cl-ppcre:split "[ \t\n]+" input)))
-    (cond ((equal (car tokens) "w")
-           (values #'weight (list (read-from-string (second tokens))))))))
+(define-condition invalid-input (error)
+  ((input :reader input :initarg :input)))
 
-(defun weight (w)
-  "Adds entry for today's weight."
-  w)
+(defvar *log* (make-array 100 :fill-pointer 0 :adjustable t)
+  "The log holding all our log entries.")
 
-(defun safely-read-from-string (str &rest read-from-string-args)
-  "Read an expression from the string STR, with *READ-EVAL* set
-to NIL. Any unsafe expressions will be replaced by NIL in the
-resulting S-Expression."
-  (let ((*read-eval* nil))
-    (ignore-errors
-      (apply 'read-from-string str read-from-string-args))))
+(defvar *food-db (make-hash-table :test #'equal)
+  "Database holding entries for various food items.")
+
+(defun create-command (input)
+  (cond
+    ((eql (char input 0) #\w)) (create-add-weight-command input)
+    (t (error invalid-input :input input))))
+
+(defun get-user-input ()
+  (format *query-io* "> ")
+  (force-output)
+  (read-line *query-io*))
+
+(defun run ()
+  (loop (execute (create-command (get-user-input)))))
