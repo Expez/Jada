@@ -38,7 +38,8 @@
 
 (defun save-log ()
   "Saves the log to disk"
-  (ensure-directories-exist "~/.jada/" :verbose nil)
+  (ensure-directories-exist (cl-fad:pathname-parent-directory *food-file*)
+                            :verbose nil)
   (with-open-file (out *log-file* :direction :output :if-exists :supersede)
     (with-standard-io-syntax
       (print *log* out))))

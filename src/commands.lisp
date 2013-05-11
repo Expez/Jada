@@ -43,7 +43,7 @@ Raises an error if not."
         (error 'invalid-input :input input))))
 
 (defun create-add-food-command (input)
-  (verify-num-tokens input 5)
+  (verify-num-tokens input 6)
   (let ((tokens (rest (tokenize input))))
     (mapc #'safely-read-from-string tokens)
     (let* ((name (first tokens))
@@ -51,9 +51,7 @@ Raises an error if not."
              (prot (third tokens))
              (fat (fourth tokens))
              (carbs (fifth tokens))
-             (food (make-instance 'food :name name :kcal kcal
-                                                    :prot prot :fat fat
-                                                    :carbs carbs)))
+             (food (create-food name kcal prot fat carbs)))
       (make-instance 'add-food :food food))))
 
 (defun create-command (input)
@@ -72,5 +70,6 @@ Raises an error if not."
 
 (defmethod execute ((add-food-command command))
   (with-accessors ((food food)) add-food-command
-    (setf (get-hash (name food)) food)))
+    (setf (gethash (assoc :name food) *food-db*) food))
+  (save-food-db))
 

@@ -18,15 +18,24 @@
          (prot (third tokens))
          (fat (fourth tokens))
          (carbs (fifth tokens)))
-    (make-instance 'jada::food :name name :kcal kcal
-                   :prot prot :fat fat
-                   :carbs carbs)))
+    (jada::create-food name kcal prot fat carbs)))
+
+(defvar *food-string* "pizza 1500 50 47 103")
 
 (test create-add-food-command
-  (let* ((food-string "pizza 1500 50 47 103")
-         (cmd (jada::create-add-food-command food-string))
+  (let* ((cmd (jada::create-add-food-command (concatenate 'string "add "
+                                                          *food-string*)))
          (food (jada::food cmd))
-         (expected (string->food food-string)))
-    (is (jada::same food expected))))
+         (expected (string->food *food-string*)))
+    (is (equal food expected))))
+
+(test save-and-load-food-db
+  (setf jada::*food-file* "food")
+  (let ((food (string->food *food-string*)))
+    (jada::execute (jada::create-add-food-command (concatenate 'string "add "
+                                                               *food-string*)))
+   (clrhash jada::*food-db*)
+   (jada::load-food-db)
+   (is (equal (gethash (assoc :name food) jada::*food-db*) food))))
 
 (run!)
