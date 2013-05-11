@@ -9,4 +9,5 @@
    #:food-kcal
    #:food-prot
    #:food-fat
-   #:food-carbs))
+   #:food-carbs
+   #:get-weight))

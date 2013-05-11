@@ -31,11 +31,20 @@
 (test save-and-load-food-db
   (setf jada::*food-file* "food")
   (let ((food (string->food *food-string*)))
-    (jada::execute (create-command (concatenate 'string "add " *food-string*)))
+    (execute (create-command (concatenate 'string "add " *food-string*)))
    (clrhash jada::*food-db*)
    (jada::load-food-db)
    (when (cl-fad:file-exists-p "food")
     (delete-file "food"))
    (is (equal (get-food (food-name food)) food))))
+
+(test save-and-load-log
+  (setf jada::*log-file* "log")
+  (execute (create-command "weight 83"))
+  (setf jada::*log* nil)
+  (jada::load-log)
+  (when (cl-fad:file-exists-p "log")
+    (delete-file "log"))
+  (is (equal (get-weight (jada::today)) 83)))
 
 (run!)

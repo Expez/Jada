@@ -6,6 +6,8 @@
 command the user requested."))
 
 (defmacro def-command (name &rest slots)
+  "Macro to create a class representing an executable command.  With readers for
+the given slots."
   `(defclass ,name (command)
      ,(loop
          for slot in slots collecting
@@ -63,12 +65,12 @@ Raises an error if not."
 (defgeneric execute (c)
   (:documentation "Executes the user-specified command."))
 
-(defmethod execute ((log-weight-command command))
+(defmethod execute ((log-weight-command log-weight))
   (with-accessors ((new-weight weight)) log-weight-command
     (let ((todays-log-entry (today)))
-      (setf (getf todays-log-entry :weight) new-weight))))
+      (set-weight todays-log-entry new-weight))))
 
-(defmethod execute ((add-food-command command))
+(defmethod execute ((add-food-command add-food))
   (with-accessors ((food food)) add-food-command
     (add-food food)))
 

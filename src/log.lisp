@@ -5,28 +5,29 @@
 
 (defvar *log-file* "~/.jada/log")
 
-(defun create-log-entry (date weight protocol kcal prot fat carbs)
-  (list :date date :weight weight :protocol protocol
-        :kcal kcal :prot prot :fat fat :carbs carbs))
+(defun create-log-entry (&optional date weight protocol kcal prot fat carbs)
+  (let ((date (or date (current-date))))
+      (list :date date :weight weight :protocol protocol
+         :kcal kcal :prot prot :fat fat :carbs carbs)))
 
-(defmacro create-readers (slots)
+(defmacro create-getters (slots)
   `(progn
-    ,@(loop for slot in slots collecting
-           `(defun ,(intern (concatenate 'string "GET-" (symbol-name slot)))
-                (log-entry)
-              (getf log-entry ,(intern (symbol-name slot) :keyword))))))
-
-(create-readers (list date weight protocol kcal prot fat carbs))
+     ,@(loop for slot in slots collecting
+            `(defun ,(intern (concatenate 'string "GET-" (symbol-name slot)))
+                 (log-entry)
+               (getf log-entry ,(intern (symbol-name slot) :keyword))))))
 
 (defmacro create-setters (slots)
   `(progn
-    ,@(loop for slot in slots collecting
-                `(defun ,(intern (concatenate 'string "SET-" (symbol-name slot)))
-                     (log-entry value)
-                   (setf (getf log-entry ,(intern (symbol-name slot) :keyword))
-                         value)))))
+     ,@(loop for slot in slots collecting
+            `(defun ,(intern (concatenate 'string "SET-" (symbol-name slot)))
+                 (log-entry value)
+               (setf (getf log-entry ,(intern (symbol-name slot) :keyword))
+                     value)
+               (save-log)))))
 
-(create-setters (list date weight protocol kcal prot fat carbs))
+(create-getters (date weight protocol kcal prot fat carbs))
+(create-setters (date weight protocol kcal prot fat carbs))
 
 (defun current-date ()
   "Returns a plist with :day :month :year representing the current
@@ -36,7 +37,9 @@
     (list :day day :month month :year year)))
 
 (defun most-recent-log-entry ()
-  (first *log*))
+  (if (= (length *log*) 0)
+      nil
+      (elt *log* (- (length *log*) 1))))
 
 (defun add-log-entry (entry)
   (vector-push-extend entry *log*)
@@ -44,11 +47,11 @@
 
 (defun today ()
   "Returns the log entry matching today"
-  (let  ((date (getf (most-recent-log-entry) :date)))
+  (let ((date (getf (most-recent-log-entry) :date)))
     (if (equal date (current-date))
         (most-recent-log-entry)
         (progn
-          (push (make-instance 'log-entry :date (current-date)) *log*)
+          (add-log-entry (create-log-entry))
           (most-recent-log-entry)))))
 
 (defun save-log ()
