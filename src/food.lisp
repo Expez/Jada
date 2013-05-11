@@ -1,5 +1,6 @@
 (in-package :jada)
 
+
 (defvar *food-db* (make-hash-table :test #'equal)
   "Database holding entries for various food items.")
 
@@ -22,3 +23,26 @@
     (when in
       (with-standard-io-syntax
        (setf *food-db* (read in))))))
+
+(defun add-food (food)
+  "Adds food to DB."
+  (setf (gethash (assoc :name food) *food-db*) food))
+
+(defun get-food (name)
+  "Get food from DB."
+  (gethash name *food-db*))
+
+(defun food-name (food)
+  (assoc :name food))
+
+(defun food-kcal (food)
+  (assoc :kcal food))
+
+(defun food-prot (food)
+  (assoc :prot food))
+
+(defun food-fat (food)
+  (assoc :fat food))
+
+(defun food-carbs (food)
+  (assoc :carbs food))

@@ -70,6 +70,6 @@ Raises an error if not."
 
 (defmethod execute ((add-food-command command))
   (with-accessors ((food food)) add-food-command
-    (setf (gethash (assoc :name food) *food-db*) food))
+    (add-food food))
   (save-food-db))
 

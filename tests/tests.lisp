@@ -36,6 +36,8 @@
                                                                *food-string*)))
    (clrhash jada::*food-db*)
    (jada::load-food-db)
-   (is (equal (gethash (assoc :name food) jada::*food-db*) food))))
+   (when (cl-fad:file-exists-p "food")
+    (delete-file "food"))
+   (is (equal (jada::get-food (jada::food-name food)) food))))
 
 (run!)
