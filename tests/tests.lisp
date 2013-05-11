@@ -8,7 +8,7 @@
 (in-suite jada)
 
 (test create-log-weight-command
-  (let ((cmd (jada::create-log-weight-command "weight 83")))
+  (let ((cmd (create-command "weight 83")))
     (is (= (jada::weight cmd) 83))))
 
 (defun string->food (s)
@@ -23,8 +23,7 @@
 (defvar *food-string* "pizza 1500 50 47 103")
 
 (test create-add-food-command
-  (let* ((cmd (jada::create-add-food-command (concatenate 'string "add "
-                                                          *food-string*)))
+  (let* ((cmd (create-command (concatenate 'string "add " *food-string*)))
          (food (jada::food cmd))
          (expected (string->food *food-string*)))
     (is (equal food expected))))
@@ -32,12 +31,11 @@
 (test save-and-load-food-db
   (setf jada::*food-file* "food")
   (let ((food (string->food *food-string*)))
-    (jada::execute (jada::create-add-food-command (concatenate 'string "add "
-                                                               *food-string*)))
+    (jada::execute (create-command (concatenate 'string "add " *food-string*)))
    (clrhash jada::*food-db*)
    (jada::load-food-db)
    (when (cl-fad:file-exists-p "food")
     (delete-file "food"))
-   (is (equal (jada::get-food (jada::food-name food)) food))))
+   (is (equal (get-food (food-name food)) food))))
 
 (run!)

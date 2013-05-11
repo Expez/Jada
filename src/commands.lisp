@@ -57,7 +57,7 @@ Raises an error if not."
 (defun create-command (input)
   (cond
     ((eql (char input 0) #\w) (create-log-weight-command input))
-    ((eql (char input 0) #\f) (create-add-food-command input))
+    ((eql (char input 0) #\a) (create-add-food-command input))
     (t (error 'invalid-input :input input))))
 
 (defgeneric execute (c)

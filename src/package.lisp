@@ -1,2 +1,12 @@
 (defpackage :jada
-  (:use #:cl #:alexandria))
+  (:use #:cl #:alexandria)
+  (:export
+   #:create-command
+   #:execute
+   #:add-food
+   #:get-food
+   #:food-name
+   #:food-kcal
+   #:food-prot
+   #:food-fat
+   #:food-carbs))
