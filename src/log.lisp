@@ -5,14 +5,28 @@
 
 (defvar *log-file* "~/.jada/log")
 
-(defclass log-entry ()
-  ((weight   :accessor weight   :initarg :weight)
-   (protocol :accessor protocol :initarg :protocol)
-   (kcal     :accessor kcal     :initarg :kcal)
-   (prot     :accessor prot     :initarg :prot)
-   (fat      :accessor fat      :initarg :fat)
-   (carbs    :accessor carbs    :initarg :carbs)
-   (date     :accessor date     :initarg :date)))
+(defun create-log-entry (date weight protocol kcal prot fat carbs)
+  (list :date date :weight weight :protocol protocol
+        :kcal kcal :prot prot :fat fat :carbs carbs))
+
+(defmacro create-readers (slots)
+  `(progn
+    ,@(loop for slot in slots collecting
+           `(defun ,(intern (concatenate 'string "GET-" (symbol-name slot)))
+                (log-entry)
+              (getf log-entry ,(intern (symbol-name slot) :keyword))))))
+
+(create-readers (list date weight protocol kcal prot fat carbs))
+
+(defmacro create-setters (slots)
+  `(progn
+    ,@(loop for slot in slots collecting
+                `(defun ,(intern (concatenate 'string "SET-" (symbol-name slot)))
+                     (log-entry value)
+                   (setf (getf log-entry ,(intern (symbol-name slot) :keyword))
+                         value)))))
+
+(create-setters (list date weight protocol kcal prot fat carbs))
 
 (defun current-date ()
   "Returns a plist with :day :month :year representing the current
@@ -25,11 +39,12 @@
   (first *log*))
 
 (defun add-log-entry (entry)
-  (push entry *log*))
+  (vector-push-extend entry *log*)
+  (save-log))
 
 (defun today ()
   "Returns the log entry matching today"
-  (with-accessors ((date date)) (most-recent-log-entry)
+  (let  ((date (getf (most-recent-log-entry) :date)))
     (if (equal date (current-date))
         (most-recent-log-entry)
         (progn
@@ -38,9 +53,8 @@
 
 (defun save-log ()
   "Saves the log to disk"
-  (ensure-directories-exist (cl-fad:pathname-parent-directory *food-file*)
-                            :verbose nil)
-  (with-open-file (out *log-file* :direction :output :if-exists :supersede)
+  (with-open-file (out (ensure-directories-exist *log-file*) :direction
+                       :output :if-exists :supersede)
     (with-standard-io-syntax
       (print *log* out))))
 
@@ -49,4 +63,4 @@
   (with-open-file (in *log-file* :if-does-not-exist nil)
     (when in
       (with-standard-io-syntax
-       (setf *log* (read in))))))
+        (setf *log* (read in))))))

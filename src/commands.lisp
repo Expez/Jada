@@ -65,11 +65,10 @@ Raises an error if not."
 
 (defmethod execute ((log-weight-command command))
   (with-accessors ((new-weight weight)) log-weight-command
-    (setf (weight (today)) new-weight))
-  (save-log))
+    (let ((todays-log-entry (today)))
+      (setf (getf todays-log-entry :weight) new-weight))))
 
 (defmethod execute ((add-food-command command))
   (with-accessors ((food food)) add-food-command
-    (add-food food))
-  (save-food-db))
+    (add-food food)))
 

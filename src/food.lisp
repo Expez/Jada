@@ -7,8 +7,7 @@
 (defvar *food-file* "~/.jada/foods")
 
 (defun create-food (name kcal prot fat carbs)
-  (pairlis (list :name :kcal :prot :fat :carbs)
-           (list name kcal prot fat carbs)))
+  (list :name name :kcal kcal :prot prot :fat fat :carbs carbs))
 
 (defun save-food-db ()
   "Saves the food db to disk"
@@ -26,23 +25,24 @@
 
 (defun add-food (food)
   "Adds food to DB."
-  (setf (gethash (assoc :name food) *food-db*) food))
+  (setf (gethash (getf food :name) *food-db*) food)
+  (save-food-db))
 
 (defun get-food (name)
   "Get food from DB."
   (gethash name *food-db*))
 
 (defun food-name (food)
-  (assoc :name food))
+  (getf food :name))
 
 (defun food-kcal (food)
-  (assoc :kcal food))
+  (getf food :kcal))
 
 (defun food-prot (food)
-  (assoc :prot food))
+  (getf food :prot))
 
 (defun food-fat (food)
-  (assoc :fat food))
+  (getf food :fat))
 
 (defun food-carbs (food)
-  (assoc :carbs food))
+  (getf food :carbs))
