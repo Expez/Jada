@@ -1,9 +1,9 @@
 (in-package :jada)
 
-(defvar *log* nil
+(defvar *log* (make-array 100 :fill-pointer 0 :adjustable t)
   "The log holding all our log entries.")
 
-(defvar *log-file* "~/.jada/jada.log")
+(defvar *log-file* "~/.jada/log")
 
 (defclass log-entry ()
   ((weight   :accessor weight   :initarg :weight)

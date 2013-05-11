@@ -70,3 +70,7 @@ Raises an error if not."
     (setf (weight (today)) new-weight))
   (save-log))
 
+(defmethod execute ((add-food-command command))
+  (with-accessors ((food food)) add-food-command
+    (setf (get-hash (name food)) food)))
+
