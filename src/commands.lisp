@@ -12,6 +12,8 @@ command the user requested."))
            `(,slot :reader ,slot :initarg ,(intern (symbol-name slot) :keyword)))))
 
 (def-command log-weight weight)
+(def-command quit)
+(def-command add-food food)
 
 (defun tokenize (input)
   "Parse user input and return a function and the arguments given."
@@ -25,30 +27,34 @@ resulting S-Expression."
     (ignore-errors
       (apply 'read-from-string str read-from-string-args))))
 
+(defun verify-num-tokens (input num-expected-tokens)
+  "Checks if we've been passed the correct number of tokens.
+Raises an error if not."
+  (unless (= (length (tokenize input)) num-expected-tokens)
+    (error 'invalid-input :input input)))
+
 (defun create-log-weight-command (input)
-  (let ((tokens (tokenize input)))
-    (if (= (length tokens) 2)
-        (let ((weight (safely-read-from-string (second tokens))))
-          (if (and (not (null weight))
-                   (numberp weight))
-              (make-instance 'log-weight :weight weight)
-              (error 'invalid-input :input input)))
+  (verify-num-tokens input 2)
+  (let* ((tokens (tokenize input))
+         (weight (safely-read-from-string (second tokens))))
+    (if (and (not (null weight))
+             (numberp weight))
+        (make-instance 'log-weight :weight weight)
         (error 'invalid-input :input input))))
 
 (defun create-add-food-command (input)
-  (let ((tokens (tokenize input)))
-    (if (= (length tokens) 5)
-        (progn
-          (mapc #'safely-read-from-string tokens)
-          (if-let ((name (first tokens))
-                   (kcal (second tokens))
-                   (prot (third tokens))
-                   (fat (fourth tokens))
-                   (carbs (fifth tokens)))
-            (make-instance 'food :name name :kcal kcal
-                           :prot prot :fat fat :carbs carbs)
-            (error 'invalid-input :input input)))
-        (error 'invalid-input :input input))))
+  (verify-num-tokens input 5)
+  (let ((tokens (rest (tokenize input))))
+    (mapc #'safely-read-from-string tokens)
+    (let* ((name (first tokens))
+             (kcal (second tokens))
+             (prot (third tokens))
+             (fat (fourth tokens))
+             (carbs (fifth tokens))
+             (food (make-instance 'food :name name :kcal kcal
+                                                    :prot prot :fat fat
+                                                    :carbs carbs)))
+      (make-instance 'add-food :food food))))
 
 (defun create-command (input)
   (cond

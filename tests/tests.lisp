@@ -8,13 +8,25 @@
 (in-suite jada)
 
 (test create-log-weight-command
-      (let ((cmd (jada::create-log-weight-command "weight 83")))
-        (is (= (jada::weight cmd) 83))))
+  (let ((cmd (jada::create-log-weight-command "weight 83")))
+    (is (= (jada::weight cmd) 83))))
 
-;; (test create-add-weight-command
-;;   (let ((cmd (create-add-food-command "pizza 1500 50 47 103")))
-;;     (is (and
-;;          (equal (name )))))
-;;   )
+(defun string->food (s)
+  (let* ((tokens (mapc #'read-from-string (jada::tokenize s)))
+         (name (first tokens))
+         (kcal (second tokens))
+         (prot (third tokens))
+         (fat (fourth tokens))
+         (carbs (fifth tokens)))
+    (make-instance 'jada::food :name name :kcal kcal
+                   :prot prot :fat fat
+                   :carbs carbs)))
+
+(test create-add-food-command
+  (let* ((food-string "pizza 1500 50 47 103")
+         (cmd (jada::create-add-food-command food-string))
+         (food (jada::food cmd))
+         (expected (string->food food-string)))
+    (is (jada::same food expected))))
 
 (run!)
