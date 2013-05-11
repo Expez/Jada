@@ -5,8 +5,13 @@
   (:documentation "A command class, holding all the data necessary to run the
 command the user requested."))
 
-(defclass log-weight (command)
-  ((weight :reader weight :initarg :weight)))
+(defmacro def-command (name &rest slots)
+  `(defclass ,name (command)
+     ,(loop
+         for slot in slots collecting
+           `(,slot :reader ,slot :initarg ,(intern (symbol-name slot) :keyword)))))
+
+(def-command log-weight weight)
 
 (defun tokenize (input)
   "Parse user input and return a function and the arguments given."
@@ -56,6 +61,6 @@ resulting S-Expression."
 
 (defmethod execute ((log-weight-command command))
   (with-accessors ((new-weight weight)) log-weight-command
-    (setf (weight today) new-weight))
+    (setf (weight (today)) new-weight))
   (save-log))
 
