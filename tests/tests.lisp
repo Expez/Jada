@@ -36,22 +36,22 @@
     (is (equal food expected))))
 
 (test save-and-load-food-db
-  (setf jada::*food-file* "food")
-  (add-pizza-to-db)
-  (clrhash jada::*food-db*)
-  (jada::load-food-db)
-  (when (cl-fad:file-exists-p "food")
-    (delete-file "food"))
-  (is (equal (lookup-food (food-name *pizza*)) *pizza*)))
+  (cl-fad:with-open-temporary-file (file)
+    (let ((food-file (cl-fad:pathname-as-file file)))
+      (setf jada::*food-file* food-file)
+      (add-pizza-to-db)
+      (clrhash jada::*food-db*)
+      (jada::load-food-db)
+      (is (equal (lookup-food (food-name *pizza*)) *pizza*)))))
 
 (test save-and-load-log
-  (setf jada::*log-file* "log")
-  (execute (create-command "weight 83"))
-  (setf jada::*log* (make-array 100 :adjustable t :fill-pointer 0))
-  (jada::load-log)
-  (when (cl-fad:file-exists-p "log")
-    (delete-file "log"))
-  (is (equal (get-weight (jada::today)) 83)))
+  (cl-fad:with-open-temporary-file (file)
+    (let ((log-file (cl-fad:pathname-as-file file)))
+      (setf jada::*log-file* log-file)
+      (execute (create-command "weight 83"))
+      (setf jada::*log* (make-array 100 :adjustable t :fill-pointer 0))
+      (jada::load-log)
+      (is (equal (get-weight (jada::today)) 83)))))
 
 (test create-ate-command
   (let ((cmd (jada::create-ate-command "ate pizza")))
@@ -69,9 +69,4 @@
     (is (equal default-entry expected))))
 
 (run!)
-
-(when (cl-fad:file-exists-p "test-foods")
-  (delete-file "test-foods"))
-(when (cl-fad:file-exists-p "test-log")
-  (delete-file "test-log"))
 

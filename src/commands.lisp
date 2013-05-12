@@ -66,7 +66,7 @@ Raises an error if not."
   (let* ((food-name (second (tokenize input)))
          (food (lookup-food food-name)))
     (unless food
-      (error 'unknown-food food-name))
+      (error 'invalid-food-name food-name))
     (make-instance 'ate :food food)))
 
 (defun create-command (input)
