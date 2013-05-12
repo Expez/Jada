@@ -60,7 +60,11 @@
 (test ate-command
   (add-pizza-to-db)
   (execute (create-command "ate pizza"))
-  (is (= 1 1)))
+  (let ((log (jada::today))
+        (food (remf *pizza* :name)))
+    (is (loop
+           for (key value) on food by #'cddr
+           always (= (getf log key) (getf food key))))))
 
 (test create-log-entry
   (let ((default-entry (jada::create-log-entry))
