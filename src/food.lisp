@@ -1,10 +1,12 @@
 (in-package :jada)
 
-
 (defvar *food-db* (make-hash-table :test #'equal)
   "Database holding entries for various food items.")
 
-(defvar *food-file* "~/.jada/foods")
+(defvar *food-file*
+  (if (and (boundp '*test*) *test*)
+      "test-foods"
+      "~/.jada/foods"))
 
 (defun create-food (name kcal prot fat carbs)
   (list :name name :kcal kcal :prot prot :fat fat :carbs carbs))
@@ -28,7 +30,7 @@
   (setf (gethash (getf food :name) *food-db*) food)
   (save-food-db))
 
-(defun get-food (name)
+(defun lookup-food (name)
   "Get food from DB."
   (gethash name *food-db*))
 

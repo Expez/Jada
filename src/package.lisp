@@ -4,7 +4,7 @@
    #:create-command
    #:execute
    #:add-food
-   #:get-food
+   #:lookup-food
    #:food-name
    #:food-kcal
    #:food-prot
