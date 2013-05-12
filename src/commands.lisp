@@ -56,10 +56,15 @@ Raises an error if not."
              (food (create-food name kcal prot fat carbs)))
       (make-instance 'add-food :food food))))
 
+(defun create-quit-command (input)
+  (verify-num-tokens 1)
+  (make-instance 'quit))
+
 (defun create-command (input)
   (cond
     ((eql (char input 0) #\w) (create-log-weight-command input))
     ((eql (char input 0) #\a) (create-add-food-command input))
+    ((eql (char input 0) #\q) (create-quit-command))
     (t (error 'invalid-input :input input))))
 
 (defgeneric execute (c)
@@ -74,3 +79,5 @@ Raises an error if not."
   (with-accessors ((food food)) add-food-command
     (add-food food)))
 
+(defmethod execute ((quit-command quit))
+  (sb-ext:exit))

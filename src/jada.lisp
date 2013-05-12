@@ -9,4 +9,7 @@
   (read-line *query-io*))
 
 (defun run ()
-  (loop (execute (create-command (get-user-input)))))
+  (loop
+     (handler-case (execute (create-command (get-user-input)))
+       (invalid-input (c)
+         (format *query-io* "Invalid input: ~a~%" (input c))))))
