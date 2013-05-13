@@ -47,15 +47,9 @@ Raises an error if not."
 
 (defun create-add-food-command (input)
   (verify-num-tokens input 6)
-  (let ((tokens (rest (tokenize input))))
-    (mapc #'safely-read-from-string tokens)
-    (let* ((name (first tokens))
-             (kcal (second tokens))
-             (prot (third tokens))
-             (fat (fourth tokens))
-             (carbs (fifth tokens))
-             (food (create-food name kcal prot fat carbs)))
-      (make-instance 'add-food :food food))))
+  (let* ((food-string (subseq input 4))
+         (food (food-from-string food-string)))
+    (make-instance 'add-food :food food)))
 
 (defun create-quit-command (input)
   (verify-num-tokens input 1)
@@ -63,7 +57,7 @@ Raises an error if not."
 
 (defun create-eat-command (input)
   (verify-num-tokens input 2)
-  (let* ((food-name (second (tokenize input)))
+  (let* ((food-name (intern (string-upcase (second (tokenize input)))))
          (food (lookup-food food-name)))
     (unless food
       (error 'invalid-food-name food-name))

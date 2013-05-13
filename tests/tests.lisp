@@ -7,15 +7,6 @@
 
 (in-suite jada)
 
-(defun string->food (s)
-  (let* ((tokens (mapc #'read-from-string (jada::tokenize s)))
-         (name (first tokens))
-         (kcal (second tokens))
-         (prot (third tokens))
-         (fat (fourth tokens))
-         (carbs (fifth tokens)))
-    (jada::create-food name kcal prot fat carbs)))
-
 (defvar *pizza-string* "pizza 1500 50 47 103")
 
 (defun perform (command-string)
@@ -24,11 +15,11 @@
 (defun add-pizza-to-db ()
   (perform (concatenate 'string "add " *pizza-string*)))
 
-(defvar *pizza* (string->food *pizza-string*))
+(defvar *pizza* (jada::food-from-string *pizza-string*))
 
 (test add-food-command
   (add-pizza-to-db)
-  (is (equal (lookup-food "pizza") *pizza*)))
+  (is (equal (lookup-food 'pizza) *pizza*)))
 
 (test log-weight-command
   (execute (create-command "weight 83"))

@@ -1,6 +1,6 @@
 (in-package :jada)
 
-(defvar *food-db* (make-hash-table :test #'equal)
+(defvar *food-db* (make-hash-table)
   "Database holding entries for various food items.")
 
 (defvar *food-file* "~/.jada/foods")
@@ -9,6 +9,15 @@
   (let ((food (list :name name :kcal kcal :prot prot :fat fat :carbs carbs)))
    (mapc (lambda (e) (unless (keywordp e) (check-type e number))) (cddr food))
    food))
+
+(defun food-from-string (s)
+  (let* ((tokens (mapcar #'read-from-string (tokenize s)))
+         (name (first tokens))
+         (kcal (second tokens))
+         (prot (third tokens))
+         (fat (fourth tokens))
+         (carbs (fifth tokens)))
+    (create-food name kcal prot fat carbs)))
 
 (defun save-food-db ()
   "Saves the food db to disk"
