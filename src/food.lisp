@@ -38,6 +38,11 @@
   (setf (gethash (getf food :name) *food-db*) food)
   (save-food-db))
 
+(defun as-puke (food)
+  "Used with the barf command, aka undo for meals.  The value of a
+  food as puke has the same magnitude, but all elements are negated."
+  (mapc (lambda (entry) (when (numberp entry) (* -1 entry))) food))
+
 (defun lookup-food (name)
   "Get food from DB."
   (gethash name *food-db*))

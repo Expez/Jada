@@ -38,20 +38,24 @@
   (cl-fad:with-open-temporary-file (file)
     (let ((log-file (cl-fad:pathname-as-file file)))
       (setf jada::*log-file* log-file)
-      (execute (create-command "weight 83"))
+      (perform "weight 83")
       (setf jada::*log* (make-array 100 :adjustable t :fill-pointer 0))
       (jada::load-log)
       (is (equal (get-weight (jada::today)) 83)))))
 
 (test eat-command
   (add-pizza-to-db)
-  (execute (create-command "eat pizza"))
+  (perform "eat pizza")
   (let ((log (jada::today))
         (food (remf *pizza* :name)))
     (is (loop
            for (key value) on food by #'cddr
            always (= (getf log key) (getf food key))))))
 
-(test barf-command )
+(test barf-command
+  (add-pizza-to-db)
+  (perform "eat pizza")
+  (perform "barf pizza")
+  (is (= 0 (get-kcal (today)))))
 (run!)
 

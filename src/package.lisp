@@ -11,4 +11,5 @@
    #:food-fat
    #:food-carbs
    #:get-weight
+   #:get-kcal
    #:today))
