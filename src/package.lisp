@@ -10,4 +10,5 @@
    #:food-prot
    #:food-fat
    #:food-carbs
-   #:get-weight))
+   #:get-weight
+   #:today))

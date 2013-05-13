@@ -9,10 +9,6 @@
 
 (in-suite jada)
 
-(test create-log-weight-command
-  (let ((cmd (create-command "weight 83")))
-    (is (= (jada::weight cmd) 83))))
-
 (defun string->food (s)
   (let* ((tokens (mapc #'read-from-string (jada::tokenize s)))
          (name (first tokens))
@@ -24,16 +20,21 @@
 
 (defvar *pizza-string* "pizza 1500 50 47 103")
 
+(defun perform (command-string)
+  (execute (create-command command-string)))
+
 (defun add-pizza-to-db ()
-  (execute (create-command (concatenate 'string "add " *pizza-string*))))
+  (perform (concatenate 'string "add " *pizza-string*)))
 
 (defvar *pizza* (string->food *pizza-string*))
 
-(test create-add-food-command
-  (let* ((cmd (create-command (concatenate 'string "add " *pizza-string*)))
-         (food (jada::food cmd))
-         (expected (string->food *pizza-string*)))
-    (is (equal food expected))))
+(test add-food-command
+  (add-pizza-to-db)
+  (is (equal (lookup-food "pizza") *pizza*)))
+
+(test log-weight-command
+  (execute (create-command "weight 83"))
+  (is (= (get-weight (today)) 83)))
 
 (test save-and-load-food-db
   (cl-fad:with-open-temporary-file (file)
@@ -53,24 +54,14 @@
       (jada::load-log)
       (is (equal (get-weight (jada::today)) 83)))))
 
-(test create-ate-command
-  (let ((cmd (jada::create-ate-command "ate pizza")))
-    (is (equal (jada::food cmd) *pizza*))))
-
-(test ate-command
+(test eat-command
   (add-pizza-to-db)
-  (execute (create-command "ate pizza"))
+  (execute (create-command "eat pizza"))
   (let ((log (jada::today))
         (food (remf *pizza* :name)))
     (is (loop
            for (key value) on food by #'cddr
            always (= (getf log key) (getf food key))))))
-
-(test create-log-entry
-  (let ((default-entry (jada::create-log-entry))
-        (expected (jada::create-log-entry (jada::current-date)
-                                          0 'jada::+20-20 0 0 0 0)))
-    (is (equal default-entry expected))))
 
 (run!)
 
