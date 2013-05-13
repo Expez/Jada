@@ -3,10 +3,7 @@
 (defvar *log* (make-array 100 :fill-pointer 0 :adjustable t)
   "The log holding all our log entries.")
 
-(defvar *log-file*
-  (if (and (boundp '*test*) *test*)
-      "test-log"
-      "~/.jada/log"))
+(defvar *log-file* "~/.jada/log")
 
 (defun create-log-entry (&optional date weight protocol kcal prot fat carbs)
   "Creates a log entry using default values from the previous log entry for

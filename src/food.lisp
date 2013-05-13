@@ -3,13 +3,12 @@
 (defvar *food-db* (make-hash-table :test #'equal)
   "Database holding entries for various food items.")
 
-(defvar *food-file*
-  (if (and (boundp '*test*) *test*)
-      "test-foods"
-      "~/.jada/foods"))
+(defvar *food-file* "~/.jada/foods")
 
 (defun create-food (name kcal prot fat carbs)
-  (list :name name :kcal kcal :prot prot :fat fat :carbs carbs))
+  (let ((food (list :name name :kcal kcal :prot prot :fat fat :carbs carbs)))
+   (mapc (lambda (e) (unless (keywordp e) (check-type e number))) (cddr food))
+   food))
 
 (defun save-food-db ()
   "Saves the food db to disk"

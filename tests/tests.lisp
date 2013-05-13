@@ -1,8 +1,6 @@
 (defpackage #:jada-tests
   (:use #:common-lisp #:jada #:5am))
 
-(defvar jada::*test* t)
-
 (in-package #:jada-tests)
 
 (def-suite jada)
@@ -63,5 +61,6 @@
            for (key value) on food by #'cddr
            always (= (getf log key) (getf food key))))))
 
+(test barf-command )
 (run!)
 
