@@ -19,6 +19,7 @@ the given slots."
 (def-command eat food)
 (def-command barf puke)
 (def-command ls)
+(def-command print food)
 
 (defun tokenize (input)
   "Parse user input and return a function and the arguments given."
@@ -68,6 +69,12 @@ Raises an error if not."
       (error 'invalid-food-name food-name))
     (make-instance 'eat :food food)))
 
+(defun create-print-command (input)
+  (verify-num-tokens 2)
+  (let ((food-name (string-to-symbol (second (tokenize input))))
+        (food (lookup-food food-name)))
+    (make-instance 'print :food food)))
+
 (defun create-barf-command (input)
   (verify-num-tokens input 2)
   (let* ((food-name (string-to-symbol (second (tokenize input))))
@@ -85,6 +92,7 @@ Raises an error if not."
     ((eql (char input 0) #\e) (create-eat-command input))
     ((eql (char input 0) #\b) (create-barf-command input))
     ((eql (char input 0) #\l) (create-ls-command input))
+    ((eql (char input 0) #\p) (create-print-command input))
     (t (error 'invalid-input :input input))))
 
 (defgeneric execute (c)
@@ -109,6 +117,10 @@ Raises an error if not."
 
 (defmethod execute ((ls-command ls))
   (print-food-db))
+
+(defmethod execute ((print-command print))
+  (with-accessors ((food food)) print-command
+      (print-food food)))
 
 (defmethod execute ((quit-command quit))
   (sb-ext:exit))
