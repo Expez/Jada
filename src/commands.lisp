@@ -18,6 +18,7 @@ the given slots."
 (def-command add-food food)
 (def-command eat food)
 (def-command barf puke)
+(def-command ls)
 
 (defun tokenize (input)
   "Parse user input and return a function and the arguments given."
@@ -83,6 +84,7 @@ Raises an error if not."
     ((eql (char input 0) #\q) (create-quit-command input))
     ((eql (char input 0) #\e) (create-eat-command input))
     ((eql (char input 0) #\b) (create-barf-command input))
+    ((eql (char input 0) #\l) (create-ls-command input))
     (t (error 'invalid-input :input input))))
 
 (defgeneric execute (c)
@@ -104,6 +106,9 @@ Raises an error if not."
 (defmethod execute ((barf-command barf))
   (with-accessors ((puke puke)) barf-command
     (log-meal puke)))
+
+(defmethod execute ((ls-command ls))
+  (print-food-db))
 
 (defmethod execute ((quit-command quit))
   (sb-ext:exit))

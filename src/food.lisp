@@ -6,8 +6,9 @@
 (defvar *food-file* "~/.jada/foods")
 
 (defun create-food (name kcal prot fat carbs)
-  (let ((food (list :name name :kcal kcal :prot prot :fat fat :carbs carbs)))
-   (mapc (lambda (e) (unless (keywordp e) (check-type e number))) (cddr food))
+  (let* ((food (list :name name :kcal kcal :prot prot :fat fat :carbs carbs))
+         (food-sans-name (cddr food)))
+   (mapc (lambda (e) (unless (keywordp e) (check-type e number))) food-sans-name)
    food))
 
 (defun food-from-string (s)
@@ -46,6 +47,19 @@
 (defun lookup-food (name)
   "Get food from DB."
   (gethash name *food-db*))
+
+(defun print-food-db ()
+  "Displays content of the DB."
+  (format *query-io* "Name kcal fat prot carbs~%~%")
+  (maphash-values #'print-food *food-db*))
+
+(defun print-food (food)
+  (let ((name (food-name food))
+        (kcal (food-kcal food))
+        (prot (food-prot food))
+        (fat (food-fat food) )
+        (carbs (food-carbs food)))
+    (format *query-io* "~a ~4,1f ~3,1f ~3,1f ~3,1f~%" name kcal prot fat carbs)))
 
 (defun food-name (food)
   (getf food :name))
