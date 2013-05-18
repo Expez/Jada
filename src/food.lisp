@@ -8,16 +8,19 @@
 (defun create-food (name kcal prot fat carbs)
   (let* ((food (list :name name :kcal kcal :prot prot :fat fat :carbs carbs))
          (food-sans-name (cddr food)))
-   (mapc (lambda (e) (unless (keywordp e) (check-type e number))) food-sans-name)
-   food))
+    (mapc (lambda (food-element)
+            (unless (keywordp food-element)
+              (check-type food-element number))) food-sans-name)
+    food))
 
 (defun food-from-string (s)
-  (let* ((tokens (mapcar #'read-from-string (tokenize s)))
-         (name (first tokens))
-         (kcal (second tokens))
-         (prot (third tokens))
-         (fat (fourth tokens))
-         (carbs (fifth tokens)))
+  (let* ((name (read-from-string (string-right-trim '(#\Space) (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s))))
+         (start (1+ (length (symbol-name name))))
+         (tokens (mapcar #'read-from-string (tokenize s :start start)))
+         (kcal (first tokens))
+         (prot (second  tokens))
+         (fat (third tokens))
+         (carbs (fourth tokens)))
     (create-food name kcal prot fat carbs)))
 
 (defun save-food-db ()
@@ -32,7 +35,7 @@
   (with-open-file (in *food-file* :if-does-not-exist nil)
     (when in
       (with-standard-io-syntax
-       (setf *food-db* (read in))))))
+        (setf *food-db* (read in))))))
 
 (defun add-food (food)
   "Adds food to DB."

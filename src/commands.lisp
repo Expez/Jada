@@ -25,9 +25,9 @@ the given slots."
 (def-command today)
 (def-command no)
 
-(defun tokenize (input)
+(defun tokenize (input &key start)
   "Parse user input and return a function and the arguments given."
-  (cl-ppcre:split "[ ]+" (string-downcase input)))
+  (cl-ppcre:split "[ ]+" (string-downcase input) :start start))
 
 (defun safely-read-from-string (str &rest read-from-string-args)
   "Read an expression from the string STR, with *READ-EVAL* set
@@ -53,7 +53,6 @@ Raises an error if not."
         (error 'invalid-input :input input))))
 
 (defun create-add-food-command (input)
-  (verify-num-tokens input 6)
   (let* ((food-string (subseq input 4))
          (food (food-from-string food-string)))
     (make-instance 'add-food :food food)))
