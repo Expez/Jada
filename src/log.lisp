@@ -5,16 +5,20 @@
 
 (defvar *log-file* "~/.jada/log")
 
-(defun create-log-entry (&optional date weight protocol kcal prot fat carbs)
+(defun create-log-entry (&optional date weight protocol kcal prot fat carbs
+                                   total-prot tdee workout-day)
   "Creates a log entry using default values from the previous log entry for
  tdee and protocol."
-  (let* ((prototype-entry (list :date (current-date) :weight 0
+  (let* ((prototype-entry (list :date (current-date) :weight 83
                                 :protocol '+20-20 :kcal 0 :prot 0 :fat 0
-                                :carbs 0))
+                                :carbs 0 :total-prot 187 :tdee 2400
+                                :workout-day nil))
          (prev-entry (or (most-recent-log-entry) prototype-entry))
          (date (or date (current-date)))
          (new-entry (list :date date :weight weight :protocol protocol
-                          :kcal kcal :prot prot :fat fat :carbs carbs)))
+                          :kcal kcal :prot prot :fat fat :carbs carbs
+                          :total-prot total-prot :tdee tdee
+                          :workout-day workout-day)))
     (initialize-log-entry new-entry prev-entry)))
 
 (defun initialize-log-entry (new-entry prototype-entry)
@@ -43,8 +47,11 @@
                      value)
                (save-log)))))
 
-(create-getters (date weight protocol kcal prot fat carbs))
-(create-setters (date weight protocol kcal prot fat carbs))
+(create-getters
+ (date weight protocol kcal prot fat carbs total-prot tdee workout-day))
+
+(create-setters
+ (date weight protocol kcal prot fat carbs total-prot tdee workout-day))
 
 (defun current-date ()
   "Returns a plist with :day :month :year representing the current

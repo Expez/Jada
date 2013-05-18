@@ -12,4 +12,5 @@
    #:food-carbs
    #:get-weight
    #:get-kcal
-   #:today))
+   #:today
+   #:leangains-macros))
