@@ -22,6 +22,7 @@ the given slots."
 (def-command display food)
 (def-command remaining)
 (def-command set-protocol protocol)
+(def-command today)
 
 (defun tokenize (input)
   "Parse user input and return a function and the arguments given."
@@ -108,6 +109,7 @@ Raises an error if not."
     ((eql (char input 0) #\b) (create-barf-command input))
     ((eql (char input 0) #\l) (create-ls-command input))
     ((eql (char input 0) #\p) (create-display-command input))
+    ((eql (char input 0) #\t) (create-today-command))
     ((equal (string-downcase (subseq input 0 2)) "pr")
      (create-set-protocol-command input))
     ((eql (char input 0) #\r) (create-remaining-command input))
@@ -142,6 +144,9 @@ Raises an error if not."
 
 (defmethod execute ((remaining-command remaining))
   (print-remaining))
+
+(defmethod execute ((today-command today))
+  (print-info-about-today))
 
 (defmethod execute ((set-protocol-command set-protocol))
   (with-accessors ((protocol protocol)) set-protocol-command

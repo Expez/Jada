@@ -93,6 +93,15 @@
           (add-log-entry (create-log-entry))
           (most-recent-log-entry)))))
 
+(defun print-info-about-today ()
+  (let ((today (cddr (today))))
+    (print-date (get-date (today)))
+    (loop for (key value) on today by #'cddr do
+         (format *query-io* "~a: ~a~%" key value))))
+
+(defun print-date (date)
+  (format *query-io* "DATE: ~{~*~d~^/~}~%" date))
+
 (defun save-log ()
   "Saves the log to disk"
   (with-open-file (out (ensure-directories-exist *log-file*) :direction
