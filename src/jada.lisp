@@ -11,7 +11,7 @@
 
 (defun get-user-input ()
   (format *query-io* "> ")
-  (force-output)
+  (force-output *query-io*)
   (read-line *query-io*))
 
 (defgeneric print-error-message (condition)
@@ -30,7 +30,8 @@
 (defun print-msg (msg &rest data)
   (apply #'format *query-io* msg data))
 
-(defun run ()
+(defun run (argv)
+  (declare (ignore argv))
   (loop
      (handler-case (execute (create-command (get-user-input)))
        (invalid-input (c)
