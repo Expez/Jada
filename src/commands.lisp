@@ -143,10 +143,12 @@ Raises an error if not."
     (print-food food)))
 
 (defmethod execute ((remaining-command remaining))
-  (print-remaining))
+  (print-remaining-macros))
 
 (defmethod execute ((today-command today))
-  (print-info-about-today))
+  (print-info-about-today)
+  (format *query-io* "~%")
+  (print-remaining-macros))
 
 (defmethod execute ((set-protocol-command set-protocol))
   (with-accessors ((protocol protocol)) set-protocol-command

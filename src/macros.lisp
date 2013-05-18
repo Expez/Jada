@@ -63,3 +63,30 @@
                        :carbs  rest-day-carbs
                        :fat rest-day-fat))))
 
+(defgeneric remaining (macros)
+  (:documentation "Returns a macro class representing todays remaining macros."))
+
+(defmethod remaining ((macros macros))
+  (with-slots (kcal prot carbs fat) macros
+    (let* ((kcal-consumed (get-kcal (today)))
+           (fat-consumed (get-fat (today)))
+           (prot-consumed (get-prot (today)))
+           (carbs-consumed (get-carbs (today))))
+      (make-instance 'macros
+                     :kcal (- kcal kcal-consumed)
+                     :fat (- fat fat-consumed)
+                     :prot (- prot prot-consumed)
+                     :carbs (- carbs carbs-consumed)))))
+
+(defun print-remaining-macros ()
+    (let* ((protocol (get-protocol (today)))
+           (remaining-macros (remaining (macros protocol)))
+           (kcal (kcal remaining-macros))
+           (fat (fat remaining-macros))
+           (prot (prot remaining-macros))
+           (carbs (carbs remaining-macros)))
+      (format *query-io* "Total macros remaining: ~%")
+      (format *query-io* "Kcal: ~d~%" kcal)
+      (format *query-io* "Prot: ~d~%" prot)
+      (format *query-io* "Fat: ~d~%" fat)
+      (format *query-io* "Carbs: ~d~%" carbs)))
