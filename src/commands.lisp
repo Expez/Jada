@@ -23,6 +23,7 @@ the given slots."
 (def-command remaining)
 (def-command set-protocol protocol)
 (def-command today)
+(def-command no)
 
 (defun tokenize (input)
   "Parse user input and return a function and the arguments given."
@@ -100,8 +101,16 @@ Raises an error if not."
   (let ((protocol (string-to-symbol (second (tokenize input)))))
     (make-instance 'set-protocol :protocol protocol)))
 
+(defun create-today-command (input)
+  (verify-num-tokens input 1)
+  (make-instance 'today))
+
+(defun create-null-command ()
+  (make-instance 'no))
+
 (defun create-command (input)
   (cond
+    ((equal input "") (create-null-command))
     ((eql (char input 0) #\w) (create-log-weight-command input))
     ((eql (char input 0) #\a) (create-add-food-command input))
     ((eql (char input 0) #\q) (create-quit-command input))
@@ -109,7 +118,7 @@ Raises an error if not."
     ((eql (char input 0) #\b) (create-barf-command input))
     ((eql (char input 0) #\l) (create-ls-command input))
     ((eql (char input 0) #\p) (create-display-command input))
-    ((eql (char input 0) #\t) (create-today-command))
+    ((eql (char input 0) #\t) (create-today-command input))
     ((equal (string-downcase (subseq input 0 2)) "pr")
      (create-set-protocol-command input))
     ((eql (char input 0) #\r) (create-remaining-command input))
@@ -153,6 +162,9 @@ Raises an error if not."
 (defmethod execute ((set-protocol-command set-protocol))
   (with-accessors ((protocol protocol)) set-protocol-command
     (set-protocol (today) protocol)))
+
+(defmethod execute ((null-command no))
+  )
 
 (defmethod execute ((quit-command quit))
   (sb-ext:exit))
