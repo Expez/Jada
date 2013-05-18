@@ -13,7 +13,7 @@
                  (:file "log")
                  (:file "food")
                  (:file "commands")
-                 (:file "protocol"))
+                 (:file "macros"))
       :in-order-to ((test-op (load-op :jada-tests)))
       :perform (test-op :after (op c)
                     (funcall (intern "RUN!" :jada-tests)
