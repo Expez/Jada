@@ -7,7 +7,7 @@
 
 (in-suite jada)
 
-(defvar *pizza-string* "pizza 1500 50 47 103")
+(defvar *pizza-string* "pizza 1000 50 25 100")
 
 (defun perform (command-string)
   (execute (create-command command-string)))
@@ -49,7 +49,6 @@
     (jada::load-log)
     (is (equal (get-weight (jada::today)) 83))))
 
-
 (test eat-command
   (with-scaffolding
     (add-pizza-to-db)
@@ -60,12 +59,24 @@
              for (key value) on food by #'cddr
              always (= (getf log key) (getf food key)))))))
 
+(test fractional-eating
+  (with-scaffolding
+    (add-pizza-to-db)
+    (let ((log (jada::today))
+          (food (remf *pizza* :name))
+          (fraction (random 5.0)))
+      (perform (concatenate 'string "eat " (write-to-string fraction) " pizza"))
+      (is (loop
+             for (key value) on food by #'cddr
+             always (= (getf log key) (* fraction (getf food key))))))))
+
 (test barf-command
   (with-scaffolding
     (add-pizza-to-db)
-    (perform "eat pizza")
-    (perform "barf pizza")
-    (is (= 0 (get-kcal (today))))))
+    (let ((fraction (random 5.0)))
+      (perform (concatenate 'string "eat " (write-to-string fraction) " pizza"))
+      (perform (concatenate 'string "barf" (write-to-string fraction) " pizza"))
+      (is (= 0 (get-kcal (today)))))))
 
 (test leangains-macros
   (with-scaffolding
