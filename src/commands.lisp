@@ -20,8 +20,8 @@ the given slots."
 (def-command barf puke)
 (def-command ls)
 (def-command display food)
-(def-command display)
 (def-command remaining)
+(def-command set-protocol protocol)
 
 (defun tokenize (input)
   "Parse user input and return a function and the arguments given."
@@ -94,6 +94,11 @@ Raises an error if not."
   (verify-num-tokens input 1)
   (make-instance 'ls))
 
+(defun create-set-protocol-command (input)
+  (verify-num-tokens input 2)
+  (let ((protocol (string-to-symbol (second (tokenize input)))))
+    (make-instance 'set-protocol :protocol protocol)))
+
 (defun create-command (input)
   (cond
     ((eql (char input 0) #\w) (create-log-weight-command input))
@@ -103,6 +108,8 @@ Raises an error if not."
     ((eql (char input 0) #\b) (create-barf-command input))
     ((eql (char input 0) #\l) (create-ls-command input))
     ((eql (char input 0) #\p) (create-display-command input))
+    ((equal (string-downcase (subseq input 0 2)) "pr")
+     (create-set-protocol-command input))
     ((eql (char input 0) #\r) (create-remaining-command input))
     (t (error 'invalid-input :input input))))
 
@@ -135,6 +142,10 @@ Raises an error if not."
 
 (defmethod execute ((remaining-command remaining))
   (print-remaining))
+
+(defmethod execute ((set-protocol-command set-protocol))
+  (with-accessors ((protocol protocol)) set-protocol-command
+    (set-protocol (today) protocol)))
 
 (defmethod execute ((quit-command quit))
   (sb-ext:exit))

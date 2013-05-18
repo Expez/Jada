@@ -29,12 +29,12 @@
 
 (with-scaffolding
   (test add-food-command
-  (add-pizza-to-db)
-  (is (equal (lookup-food 'pizza) *pizza*)))
+    (add-pizza-to-db)
+    (is (equal (lookup-food 'pizza) *pizza*)))
 
-(test log-weight-command
-  (execute (create-command "weight 83"))
-  (is (= (get-weight (today)) 83))))
+  (test log-weight-command
+    (execute (create-command "weight 83"))
+    (is (= (get-weight (today)) 83))))
 
 (with-scaffolding
   (test save-and-load-food-db
@@ -87,5 +87,9 @@
         (is (= jada::carbs (/ (* 0.75 (- 1000 400)) 4)))
         (is (= jada::fat (/ (* 0.25 (- 1000 400)) 9)))))))
 
+(test set-protocol
+  (with-scaffolding
+    (perform "protocol +20-20")
+    (is (equal (jada::get-protocol (jada::today)) 'jada::+20-20))))
 
 (run!)
