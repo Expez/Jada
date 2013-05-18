@@ -13,8 +13,14 @@
               (check-type food-element number))) food-sans-name)
     food))
 
+(defun extract-food-name (s)
+  "Extracts the food name at the start of `s'."
+  (read-from-string
+   (string-right-trim '(#\Space)
+                      (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s))))
+
 (defun food-from-string (s)
-  (let* ((name (read-from-string (string-right-trim '(#\Space) (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s))))
+  (let* ((name (extract-food-name s))
          (start (1+ (length (symbol-name name))))
          (tokens (mapcar #'read-from-string (tokenize s :start start)))
          (kcal (first tokens))

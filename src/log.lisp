@@ -60,13 +60,13 @@
     (declare (ignore s m h))
     (list :day day :month month :year year)))
 
-(defun log-meal (food)
+(defun log-meal (food amount)
   (let ((log-entry (today))
         (food (remf food :name)))
     (loop
        for (key delta) on food by #'cddr
        for current-value = (getf log-entry key) do
-         (setf (getf log-entry key) (+ current-value delta))
+         (setf (getf log-entry key) (+ current-value (* delta amount)))
        finally (update-todays-entry log-entry))))
 
 (defun update-todays-entry (new-entry)

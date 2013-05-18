@@ -16,8 +16,8 @@ the given slots."
 (def-command log-weight weight)
 (def-command quit)
 (def-command add-food food)
-(def-command eat food)
-(def-command barf puke)
+(def-command eat food amount)
+(def-command barf puke amount)
 (def-command ls)
 (def-command display food)
 (def-command remaining)
@@ -37,11 +37,13 @@ resulting S-Expression."
     (ignore-errors
       (apply 'read-from-string str read-from-string-args))))
 
-(defun verify-num-tokens (input num-expected-tokens)
+(defun verify-num-tokens (input num-expected-tokens &key (or nil or-p))
   "Checks if we've been passed the correct number of tokens.
 Raises an error if not."
-  (unless (= (length (tokenize input)) num-expected-tokens)
-    (error 'invalid-input :input input)))
+  (let* ((length (length (tokenize input)))
+         (max-length (if or-p (max or num-expected-tokens) num-expected-tokens)))
+    (unless (<= length max-length)
+      (error 'invalid-input :input input))))
 
 (defun create-log-weight-command (input)
   (verify-num-tokens input 2)
@@ -64,28 +66,40 @@ Raises an error if not."
 (defun string-to-symbol (s)
   (intern (string-upcase s)))
 
+(defun input-sans-command (input)
+  (subseq input (1+ (search " " input))))
+
+(defun extract-multiplier (input)
+  (let ((tokens (tokenize input)))
+    (if (= (length tokens) 2)
+        1
+        (safely-read-from-string (second tokens)))))
+
 (defun create-eat-command (input)
-  (verify-num-tokens input 2)
-  (let* ((food-name (string-to-symbol (second (tokenize input))))
-         (food (lookup-food food-name)))
-    (unless food
-      (error 'invalid-food-name food-name))
-    (make-instance 'eat :food food)))
+  (verify-num-tokens input 2 :or 3)
+  (flet ()
+    (let* ((food-name (extract-food-name (input-sans-command input)))
+           (multiplier (extract-multiplier input))
+           (food (lookup-food food-name)))
+      (unless food
+        (error 'invalid-food-name food-name))
+      (make-instance 'eat :food food :amount multiplier))))
 
 (defun create-display-command (input)
   (verify-num-tokens input 2)
-  (let* ((food-name (string-to-symbol (second (tokenize input))))
+  (let* ((food-name (extract-food-name (input-sans-command input)))
          (food (lookup-food food-name)))
     (make-instance 'display :food food)))
 
 (defun create-barf-command (input)
-  (verify-num-tokens input 2)
-  (let* ((food-name (string-to-symbol (second (tokenize input))))
+  (verify-num-tokens input 2 :or 3)
+  (let* ((food-name (extract-food-name (input-sans-command input)))
+         (amount (extract-multiplier input))
          (food (lookup-food food-name))
          (puke (as-puke food)))
     (unless food
       (error 'invalid-food-name food-name))
-    (make-instance 'barf :puke puke)))
+    (make-instance 'barf :puke puke :amount amount)))
 
 (defun create-remaining-command (input)
   (verify-num-tokens input 1)
@@ -97,7 +111,7 @@ Raises an error if not."
 
 (defun create-set-protocol-command (input)
   (verify-num-tokens input 2)
-  (let ((protocol (string-to-symbol (second (tokenize input)))))
+  (let ((protocol (extract-food-name (input-sans-command input))))
     (make-instance 'set-protocol :protocol protocol)))
 
 (defun create-today-command (input)
@@ -136,12 +150,12 @@ Raises an error if not."
     (add-food food)))
 
 (defmethod execute ((eat-food-command eat))
-  (with-accessors ((food food)) eat-food-command
-    (log-meal food)))
+  (with-accessors ((food food) (amount amount)) eat-food-command
+    (log-meal food amount)))
 
 (defmethod execute ((barf-command barf))
-  (with-accessors ((puke puke)) barf-command
-    (log-meal puke)))
+  (with-accessors ((puke puke) (amount amount)) barf-command
+    (log-meal puke amount)))
 
 (defmethod execute ((ls-command ls))
   (print-food-db))
