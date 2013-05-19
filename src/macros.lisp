@@ -16,14 +16,15 @@
 (defun leangainsp (protocol-name)
   "Parses a leangains protocol of form +20-20 and returns a `protocol'."
   (let* ((str (symbol-name protocol-name)))
-    (when (/= (length str) 6)
+    (when (or (< (length str) 4)
+              (> (length str) 6))
       (return-from leangainsp nil))
-    (when-let ((plus-or-minus (or (char= (char str 0) #\+)
-                                  (char= (char str 0) #\-)))
-               (workout-day (numberp (safely-read-from-string (subseq str 1 3))))
-               (plus-or-minus- (or (char= (char str 3) #\+)
-                                   (char= (char str 3) #\-)))
-               (rest-day (numberp (safely-read-from-string (subseq str 4)))))
+    (when-let* ((end (min (or (position #\+ str :start 1) (position #\- str :start 1))))
+                (workout-day (numberp (+ 1 (/ (read-from-string str nil nil :end end) 100))))
+                (start (1+ end))
+                (plus-or-minus- (or (char= (char str end) #\+)
+                                    (char= (char str end) #\-)))
+                (rest-day (numberp (+ 1 (/ (read-from-string str nil nil :start start) 100)))))
       t)))
 
 (defun leangains-macros (protocol-name)
@@ -32,9 +33,9 @@
          ;; The scalars are the factors to scale the tdee by, e.g for +20
          ;; it is 1.2
          (end (min (or (position #\+ str :start 1) (position #\- str :start 1))))
-         (rest-day-scalar (+ 1 (/ (read-from-string str nil nil :end end) 100)))
-         (start (1+ end))
-         (workout-day-scalar (+ 1 (/ (read-from-string str nil nil :start start) 100)))
+         (workout-day-scalar (+ 1 (/ (read-from-string str nil nil :end end) 100)))
+         (start end)
+         (rest-day-scalar (+ 1 (/ (read-from-string str nil nil :start start) 100)))
          (rest-day-kcal (* rest-day-scalar (get-tdee (today))))
          (workout-day-kcal (* workout-day-scalar (get-tdee (today))))
 
@@ -55,12 +56,12 @@
         (make-instance 'macros
                        :kcal workout-day-kcal
                        :prot prot
-                       :carbs  workout-day-carbs
+                       :carbs workout-day-carbs
                        :fat workout-day-fat)
         (make-instance 'macros
                        :kcal rest-day-kcal
                        :prot prot
-                       :carbs  rest-day-carbs
+                       :carbs rest-day-carbs
                        :fat rest-day-fat))))
 
 (defgeneric remaining (macros)
@@ -79,14 +80,14 @@
                      :carbs (- carbs carbs-consumed)))))
 
 (defun print-remaining-macros ()
-    (let* ((protocol (get-protocol (today)))
-           (remaining-macros (remaining (macros protocol)))
-           (kcal (kcal remaining-macros))
-           (fat (fat remaining-macros))
-           (prot (prot remaining-macros))
-           (carbs (carbs remaining-macros)))
-      (format *query-io* "Total macros remaining: ~%")
-      (format *query-io* "Kcal: ~d~%" kcal)
-      (format *query-io* "Prot: ~d~%" prot)
-      (format *query-io* "Fat: ~d~%" fat)
-      (format *query-io* "Carbs: ~d~%" carbs)))
+  (let* ((protocol (get-protocol (today)))
+         (remaining-macros (remaining (macros protocol)))
+         (kcal (kcal remaining-macros))
+         (fat (fat remaining-macros))
+         (prot (prot remaining-macros))
+         (carbs (carbs remaining-macros)))
+    (format *query-io* "Total macros remaining: ~%")
+    (format *query-io* "Kcal: ~d~%" kcal)
+    (format *query-io* "Prot: ~d~%" prot)
+    (format *query-io* "Fat: ~d~%" fat)
+    (format *query-io* "Carbs: ~d~%" carbs)))

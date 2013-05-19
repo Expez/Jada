@@ -23,7 +23,8 @@
 
 (defun initialize-log-entry (new-entry prototype-entry)
   (loop for (key value) on new-entry by #'cddr
-     if (not (or (eql key :protocol) (eql key :date) (eql key :tdee)))
+     if (not (or (eql key :protocol) (eql key :date) (eql key :tdee)
+                 (eql key :workout-day)))
      do (unless (getf new-entry key)
           (setf (getf new-entry key) 0))
      else

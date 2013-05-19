@@ -83,20 +83,21 @@
     (jada::set-tdee (jada::today) 1000)
     (jada::set-total-prot (jada::today) 100)
     (jada::set-workout-day (jada::today) nil)
-    (let ((macros (leangains-macros '+0-0)))
-      (with-slots (jada::prot jada::kcal jada::kcal
-                              jada::carbs jada::carbs
-                              jada::fat jada::fat) macros
-        (is (= jada::prot 100))
-        (is (= jada::kcal  jada::kcal 1000))
-        (is (= jada::carbs (/ (* 0.25 (- 1000 400)) 4)))
-        (is (= jada::fat (/ (* 0.75 (- 1000 400)) 9)))))
+    (let ((macros (leangains-macros '+10-10)))
+      (with-accessors ((prot jada::prot) (kcal jada::kcal) (carbs jada::carbs)
+                       (fat jada::fat)) macros
+        (is (= prot 100))
+        (is (= kcal 900))
+        (is (= carbs (/ (* 0.25 (- 900 400)) 4)))
+        (is (= fat (/ (* 0.75 (- 900 400)) 9)))))
 
     (jada::set-workout-day (jada::today) t)
-    (let ((macros (leangains-macros '+0-0)))
-      (with-slots (jada::prot jada::fat jada::carbs) macros
-        (is (= jada::carbs (/ (* 0.75 (- 1000 400)) 4)))
-        (is (= jada::fat (/ (* 0.25 (- 1000 400)) 9)))))))
+    (let ((macros (leangains-macros '+10-10)))
+      (with-accessors ((prot jada::prot) (kcal jada::kcal) (carbs jada::carbs)
+                       (fat jada::fat)) macros
+        (is (= kcal 1100))
+        (is (= carbs (/ (* 0.75 (- 1100 400)) 4)))
+        (is (= fat (/ (* 0.25 (- 1100 400)) 9)))))))
 
 (test set-protocol
   (with-scaffolding
