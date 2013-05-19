@@ -62,8 +62,8 @@
     (list :day day :month month :year year)))
 
 (defun log-meal (food amount)
-  (let ((log-entry (today))
-        (food (remf food :name)))
+  (let ((log-entry (today)))
+    (remf food :name)
     (loop
        for (key delta) on food by #'cddr
        for current-value = (getf log-entry key) do
@@ -95,6 +95,7 @@
           (most-recent-log-entry)))))
 
 (defun print-info-about-today ()
+  (format *query-io* "~%")
   (let ((today (cddr (today))))
     (print-date (get-date (today)))
     (loop for (key value) on today by #'cddr do

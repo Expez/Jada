@@ -16,8 +16,9 @@
 (defun extract-food-name (s)
   "Extracts the food name at the start of `s'."
   (intern
-   (string-right-trim '(#\Space)
-                      (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s))))
+   (string-upcase
+    (string-right-trim '(#\Space)
+                       (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s)))))
 
 (defun food-from-string (s)
   (let* ((name (extract-food-name s))
@@ -47,6 +48,9 @@
   "Adds food to DB."
   (setf (gethash (getf food :name) *food-db*) food)
   (save-food-db))
+
+(defun clear-food-db ()
+  (clrhash *food-db*))
 
 (defun as-puke (food)
   "Used with the barf command, aka undo for meals.  The value of a

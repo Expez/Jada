@@ -33,7 +33,7 @@
     (is (equal (lookup-food 'pizza) *pizza*)))
 
   (test log-weight-command
-    (execute (create-command "weight 83"))
+    (perform "weight 83")
     (is (= (get-weight (today)) 83))))
 
 (with-scaffolding
@@ -54,7 +54,7 @@
     (add-pizza-to-db)
     (perform "eat pizza")
     (let ((log (jada::today))
-          (food (remf *pizza* :name)))
+          (food (cddr *pizza*)))
       (is (loop
              for (key value) on food by #'cddr
              always (= (getf log key) (getf food key)))))))
@@ -63,12 +63,12 @@
   (with-scaffolding
     (add-pizza-to-db)
     (let ((log (jada::today))
-          (food (remf *pizza* :name))
+          (food (cddr *pizza*))
           (fraction (random 5.0)))
       (perform (concatenate 'string "eat " (write-to-string fraction) " pizza"))
       (is (loop
              for (key value) on food by #'cddr
-             always (= (getf log key) (* fraction (getf food key))))))))
+             always (= (getf log key) (* fraction value)))))))
 
 (test barf-command
   (with-scaffolding
@@ -103,5 +103,22 @@
   (with-scaffolding
     (perform "protocol +20-20")
     (is (equal (jada::get-protocol (jada::today)) 'jada::+20-20))))
+
+(test remaining
+  (with-scaffolding
+    (add-pizza-to-db)
+    (jada::set-tdee (jada::today) 1000)
+    (jada::set-total-prot (jada::today) 100)
+    (jada::set-workout-day (jada::today) nil)
+    (perform "eat pizza")
+    (let* ((remaining-macros (jada::remaining (jada::macros 'jada::+0-0)))
+          (remaining-kcal (jada::kcal remaining-macros))
+          (remaining-prot (jada::prot remaining-macros))
+          (remaining-fat (jada::fat remaining-macros))
+          (remaining-carbs (jada::carbs remaining-macros)))
+      (is (= remaining-kcal 0))
+      (is (= remaining-prot 50))
+      (is (= remaining-carbs (- (/ (* 0.25 (- 1000 200)) 4) (food-carbs *pizza*))))
+      (is (= remaining-fat (- (/ (* 0.75 (- 1000 200)) 9) (food-fat *pizza*)))))))
 
 (run!)

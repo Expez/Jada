@@ -90,4 +90,4 @@
     (format *query-io* "Kcal: ~d~%" kcal)
     (format *query-io* "Prot: ~d~%" prot)
     (format *query-io* "Fat: ~d~%" fat)
-    (format *query-io* "Carbs: ~d~%" carbs)))
+    (format *query-io* "Carbs: ~d~%~%" carbs)))

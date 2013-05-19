@@ -4,10 +4,10 @@
   ((input :reader input :initarg :input)))
 
 (define-condition invalid-food-name (invalid-input)
-  ((name :reader name :initarg name)))
+  ((name :reader name :initarg :name)))
 
 (define-condition unknown-protocol (invalid-input)
-  ((protcol :reader protcol :initarg protocol)))
+  ((protcol :reader protocol :initarg :protocol)))
 
 (defun get-user-input ()
   (format *query-io* "> ")
@@ -21,7 +21,7 @@
   (print-msg "Invalid input: ~a~%" (input c)))
 
 (defmethod print-error-message ((c invalid-food-name))
-  (print-msg "Food '~a' not found in database.~%" (input c)))
+  (print-msg "'~a' not found in database.~%" (name c)))
 
 (defmethod print-error-message ((c unknown-protocol))
   (print-msg "Unknown protocol, '~a' .~%" (string-downcase (symbol-name
@@ -32,6 +32,8 @@
 
 (defun run (argv)
   (declare (ignore argv))
+  (load-log)
+  (load-food-db)
   (loop
      (handler-case (execute (create-command (get-user-input)))
        (invalid-input (c)

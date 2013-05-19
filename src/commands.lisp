@@ -76,19 +76,18 @@ Raises an error if not."
         (safely-read-from-string (second tokens)))))
 
 (defun create-eat-command (input)
-  (verify-num-tokens input 2 :or 3)
-  (flet ()
-    (let* ((food-name (extract-food-name (input-sans-command input)))
-           (multiplier (extract-multiplier input))
-           (food (lookup-food food-name)))
-      (unless food
-        (error 'invalid-food-name food-name))
-      (make-instance 'eat :food food :amount multiplier))))
+  (let* ((food-name (extract-food-name (input-sans-command input)))
+         (multiplier (extract-multiplier input))
+         (food (lookup-food food-name)))
+    (unless food
+      (error 'invalid-food-name :name food-name))
+    (make-instance 'eat :food food :amount multiplier)))
 
 (defun create-display-command (input)
-  (verify-num-tokens input 2)
   (let* ((food-name (extract-food-name (input-sans-command input)))
          (food (lookup-food food-name)))
+    (unless food
+      (error 'invalid-food-name :name food-name))
     (make-instance 'display :food food)))
 
 (defun create-barf-command (input)
