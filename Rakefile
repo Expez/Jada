@@ -8,7 +8,7 @@ task :buildapp do
   if success
     puts "Successfully created executable."
   else
-    puts "Failed to create execute!"
+    puts "Failed to create executable!"
     puts output
   end
 end

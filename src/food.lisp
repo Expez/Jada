@@ -52,6 +52,9 @@
 (defun clear-food-db ()
   (clrhash *food-db*))
 
+(defun delete-food (food-name)
+  (remhash food-name *food-db*))
+
 (defun as-puke (food)
   "Used with the barf command, aka undo for meals.  The value of a
   food as puke has the same magnitude, but all elements are negated."
@@ -67,7 +70,7 @@
   (maphash-values #'print-food *food-db*))
 
 (defun print-food (food)
-  (let ((name (food-name food))
+  (let ((name (string-downcase (food-name food)))
         (kcal (food-kcal food))
         (prot (food-prot food))
         (fat (food-fat food) )

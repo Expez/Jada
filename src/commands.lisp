@@ -24,6 +24,7 @@ the given slots."
 (def-command set-protocol protocol)
 (def-command today)
 (def-command no)
+(def-command del name)
 
 (defun tokenize (input &key start)
   "Parse user input and return a function and the arguments given."
@@ -62,6 +63,10 @@ Raises an error if not."
 (defun create-quit-command (input)
   (verify-num-tokens input 1)
   (make-instance 'quit))
+
+(defun create-delete-command (input)
+  (let ((food-name (extract-food-name (input-sans-command input))))
+    (make-instance 'del :name food-name)))
 
 (defun string-to-symbol (s)
   (intern (string-upcase s)))
@@ -131,6 +136,7 @@ Raises an error if not."
     ((eql (char input 0) #\l) (create-ls-command input))
     ((eql (char input 0) #\p) (create-display-command input))
     ((eql (char input 0) #\t) (create-today-command input))
+    ((eql (char input 0) #\d) (create-delete-command input))
     ((equal (string-downcase (subseq input 0 2)) "pr")
      (create-set-protocol-command input))
     ((eql (char input 0) #\r) (create-remaining-command input))
@@ -175,8 +181,11 @@ Raises an error if not."
   (with-accessors ((protocol protocol)) set-protocol-command
     (set-protocol (today) protocol)))
 
-(defmethod execute ((null-command no))
-  )
+(defmethod execute ((null-command no)))
+
+(defmethod execute ((delete-command del))
+  (with-accessors ((food-name name)) delete-command
+    (delete-food food-name)))
 
 (defmethod execute ((quit-command quit))
   (sb-ext:exit))
