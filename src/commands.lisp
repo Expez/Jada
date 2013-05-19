@@ -115,7 +115,7 @@ Raises an error if not."
 
 (defun create-set-protocol-command (input)
   (verify-num-tokens input 2)
-  (let ((protocol (extract-food-name (input-sans-command input))))
+  (let ((protocol (string-to-symbol (input-sans-command input))))
     (make-instance 'set-protocol :protocol protocol)))
 
 (defun create-today-command (input)
@@ -128,6 +128,8 @@ Raises an error if not."
 (defun create-command (input)
   (cond
     ((equal input "") (create-null-command))
+    ((equal (string-downcase (subseq input 0 2)) "pr")
+     (create-set-protocol-command input))
     ((eql (char input 0) #\w) (create-log-weight-command input))
     ((eql (char input 0) #\a) (create-add-food-command input))
     ((eql (char input 0) #\q) (create-quit-command input))
@@ -137,8 +139,6 @@ Raises an error if not."
     ((eql (char input 0) #\p) (create-display-command input))
     ((eql (char input 0) #\t) (create-today-command input))
     ((eql (char input 0) #\d) (create-delete-command input))
-    ((equal (string-downcase (subseq input 0 2)) "pr")
-     (create-set-protocol-command input))
     ((eql (char input 0) #\r) (create-remaining-command input))
     (t (error 'invalid-input :input input))))
 

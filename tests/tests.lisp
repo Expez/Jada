@@ -102,7 +102,7 @@
 (test set-protocol
   (with-scaffolding
     (perform "protocol +20-20")
-    (is (equal (jada::get-protocol (jada::today)) 'jada::+20-20))))
+    (is (equal (jada::get-protocol (jada::today)) '+20-20))))
 
 (test remaining
   (with-scaffolding
