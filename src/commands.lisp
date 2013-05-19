@@ -55,7 +55,7 @@ Raises an error if not."
         (error 'invalid-input :input input))))
 
 (defun create-add-food-command (input)
-  (let* ((food-string (subseq input 4))
+  (let* ((food-string (subseq input (1+ (position #\Space input))))
          (food (food-from-string food-string)))
     (make-instance 'add-food :food food)))
 

@@ -15,7 +15,7 @@
 
 (defun extract-food-name (s)
   "Extracts the food name at the start of `s'."
-  (read-from-string
+  (intern
    (string-right-trim '(#\Space)
                       (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s))))
 
