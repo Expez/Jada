@@ -21,27 +21,27 @@
   "Creates temporary files for log and food db"
   `(cl-fad:with-open-temporary-file (log-file)
      (cl-fad:with-open-temporary-file (food-file)
-       (let ((log-file (cl-fad:pathname-as-file log-file))
-             (food-file (cl-fad:pathname-as-file food-file)))
-         (setf jada::*log-file* log-file)
-         (setf jada::*food-file* food-file)
+       (let ((jada::*log* (make-array 100 :adjustable t :fill-pointer 0))
+             (jada::*food-db* (make-hash-table))
+             (jada::*food-file* (cl-fad:pathname-as-file food-file))
+             (jada::*log-file* (cl-fad:pathname-as-file log-file)))
          (progn ,@body)))))
 
 (with-scaffolding
-  (test add-food-command
-    (add-pizza-to-db)
-    (is (equal (lookup-food 'pizza) *pizza*)))
+    (test add-food-command
+      (add-pizza-to-db)
+      (is (equal (lookup-food 'pizza) *pizza*)))
 
   (test log-weight-command
     (perform "weight 83")
     (is (= (get-weight (today)) 83))))
 
 (with-scaffolding
-  (test save-and-load-food-db
-    (add-pizza-to-db)
-    (clrhash jada::*food-db*)
-    (jada::load-food-db)
-    (is (equal (lookup-food (food-name *pizza*)) *pizza*)))
+    (test save-and-load-food-db
+      (add-pizza-to-db)
+      (clrhash jada::*food-db*)
+      (jada::load-food-db)
+      (is (equal (lookup-food (food-name *pizza*)) *pizza*)))
 
   (test save-and-load-log
     (perform "weight 83")
@@ -51,36 +51,46 @@
 
 (test eat-command
   (with-scaffolding
-    (add-pizza-to-db)
+      (add-pizza-to-db)
     (perform "eat pizza")
     (let ((log (jada::today))
           (food (cddr *pizza*)))
       (is (loop
              for (key value) on food by #'cddr
-             always (= (getf log key) (getf food key)))))))
+             always (= (getf log key) value))))))
+
+(defun float= (f1 f2 tolerance)
+  "Compares the floats `f1' and `f2' returns T if they are within
+  `tolerance' of one another."
+  (let* ((abs-max (max (abs f1) (abs f2)))
+         (abs-min (min (abs f1) (abs f2)))
+         (difference (- abs-max abs-min)))
+    (<=  difference tolerance)))
 
 (test fractional-eating
   (with-scaffolding
-    (add-pizza-to-db)
+      (add-pizza-to-db)
     (let ((log (jada::today))
           (food (cddr *pizza*))
           (fraction (random 5.0)))
       (perform (concatenate 'string "eat " (write-to-string fraction) " pizza"))
       (is (loop
              for (key value) on food by #'cddr
-             always (= (getf log key) (* fraction value)))))))
+             always (float= (getf log key) (* fraction value) 0.01))))))
 
 (test barf-command
   (with-scaffolding
-    (add-pizza-to-db)
+      (add-pizza-to-db)
+    (format t "kcal prior to eating ~a~%" (get-kcal (today)))
     (let ((fraction (random 5.0)))
       (perform (concatenate 'string "eat " (write-to-string fraction) " pizza"))
-      (perform (concatenate 'string "barf" (write-to-string fraction) " pizza"))
-      (is (= 0 (get-kcal (today)))))))
+      (perform (concatenate 'string "barf " (write-to-string fraction) " pizza"))
+      (format t "eat and barf kcal: ~a fraction: ~a~%" (get-kcal (today)) fraction)
+      (is (float= (get-kcal (today)) 0 0.01)))))
 
 (test leangains-macros
   (with-scaffolding
-    (jada::set-tdee (jada::today) 1000)
+      (jada::set-tdee (jada::today) 1000)
     (jada::set-total-prot (jada::today) 100)
     (jada::set-workout-day (jada::today) nil)
     (let ((macros (leangains-macros '+10-10)))
