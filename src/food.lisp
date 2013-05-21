@@ -17,8 +17,8 @@
   "Extracts the food name at the start of `s'."
   (intern
    (string-upcase
-    (string-right-trim '(#\Space)
-                       (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s)))))
+    (string-trim '(#\Space)
+                 (cl-ppcre:scan-to-strings "[A-z-ÅåÆæØø ]+" s)))))
 
 (defun food-from-string (s)
   (let* ((name (extract-food-name s))
@@ -58,7 +58,7 @@
 (defun as-puke (food)
   "Used with the barf command, aka undo for meals.  The value of a
   food as puke has the same magnitude, but all elements are negated."
-  (mapc (lambda (entry) (when (numberp entry) (* -1 entry))) food))
+  (mapcar (lambda (entry) (if (numberp entry) (* -1 entry) entry)) food))
 
 (defun lookup-food (name)
   "Get food from DB."
