@@ -17,7 +17,7 @@
 
 (defvar *pizza* (jada::food-from-string *pizza-string*))
 
-(defmacro with-scaffolding (&body body)
+(defmacro with-test-db (&body body)
   "Creates temporary files for log and food db"
   `(cl-fad:with-open-temporary-file (log-file)
      (cl-fad:with-open-temporary-file (food-file)
@@ -27,30 +27,54 @@
              (jada::*log-file* (cl-fad:pathname-as-file log-file)))
          (progn ,@body)))))
 
-(with-scaffolding
-  (test add-food-command
-    (add-pizza-to-db)
-    (is (equal (lookup-food 'pizza) *pizza*)))
+(defmacro with-stub-for (fdef &body body)
+  "Stubs out its function arguments."
+  (let ((oldf (gensym))
+        (result (gensym))
+        (name (car fdef))
+        (args (cadr fdef))
+        (rbody (cddr fdef)))
+    `(let ((,oldf (symbol-function ',name)))
+       (setf (symbol-function ',name) (lambda ,args ,@rbody))
+       (let ((,result (progn ,@body)))
+         (setf (symbol-function ',name) ,oldf)
+         ,result))))
 
-  (test log-weight-command
+(defmacro without-persistance (&body body)
+  (let ((jada::*log* (make-array 100 :adjustable t :fill-pointer 0))
+        (jada::*food-db* (make-hash-table)))
+    `(with-stub-for (jada::save-food-db () ())
+       (with-stub-for (jada::save-log () (print "fooooooooooooooooooo")))
+       (with-stub-for (jada::load-food-db () (print "BAAAAAAAAAAAAAAAAAAAAR")))
+       (with-stub-for (jada::load-log () (print "BAAAAAAAAAAAAAAAAAAAAZ")))
+       (progn ,@body))))
+
+(test add-food-command
+  (without-persistance
+    (add-pizza-to-db)
+    (is (equal (lookup-food 'pizza) *pizza*))))
+
+(test log-weight-command
+  (without-persistance
     (perform "weight 83")
     (is (= (get-weight (today)) 83))))
 
-(with-scaffolding
-  (test save-and-load-food-db
+(test save-and-load-food-db
+  (with-test-db
     (add-pizza-to-db)
     (clrhash jada::*food-db*)
     (jada::load-food-db)
-    (is (equal (lookup-food (food-name *pizza*)) *pizza*)))
+    (is (equal (lookup-food (food-name *pizza*)) *pizza*))))
 
-  (test save-and-load-log
+(test save-and-load-log
+  (with-test-db
     (perform "weight 83")
     (setf jada::*log* (make-array 100 :adjustable t :fill-pointer 0))
     (jada::load-log)
     (is (equal (get-weight (jada::today)) 83))))
 
 (test eat-command
-  (with-scaffolding
+  (without-persistance
     (add-pizza-to-db)
     (perform "eat pizza")
     (let ((log (jada::today))
@@ -68,7 +92,7 @@
     (<=  difference tolerance)))
 
 (test fractional-eating
-  (with-scaffolding
+  (without-persistance
     (add-pizza-to-db)
     (let ((log (jada::today))
           (food (cddr *pizza*))
@@ -79,7 +103,7 @@
              always (float= (getf log key) (* fraction value) 0.01))))))
 
 (test barf-command
-  (with-scaffolding
+  (without-persistance
     (add-pizza-to-db)
     (let ((fraction (random 5.0)))
       (perform (concatenate 'string "eat " (write-to-string fraction) " pizza"))
@@ -87,7 +111,7 @@
       (is (float= (get-kcal (today)) 0 0.01)))))
 
 (test leangains-macros
-  (with-scaffolding
+  (without-persistance
     (jada::set-tdee (jada::today) 1000)
     (jada::set-total-prot (jada::today) 100)
     (jada::set-workout-day (jada::today) nil)
@@ -108,12 +132,12 @@
         (is (= fat (/ (* 0.25 (- 1100 400)) 9)))))))
 
 (test set-protocol
-  (with-scaffolding
+  (without-persistance
     (perform "protocol +20-20")
     (is (equal (jada::get-protocol (jada::today)) '+20-20))))
 
 (test remaining
-  (with-scaffolding
+  (without-persistance
     (add-pizza-to-db)
     (jada::set-tdee (jada::today) 1000)
     (jada::set-total-prot (jada::today) 100)
