@@ -9,3 +9,10 @@ provided the weight of the most recent entry in the log."
      (assoc-in log [date :weight] weight))
   ([log weight]
      (assoc-in log [(t/today-at-midnight) :weight] weight)))
+
+(defn ate
+  "Log that we ate `food', or that we ate `amount' of `food'."
+  ([log food]
+     (ate log food 1))
+  ([log food amount]
+     (update-in log [(t/today-at-midnight) :foods] conj [food amount])))
