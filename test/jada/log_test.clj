@@ -27,3 +27,7 @@
   (deftest food-is-removed
     (is (= (:foods ((barfed (ate {} cookies 2) cookies 2) today))
            []))))
+
+(deftest food-aggregation
+  (is (= (aggregate (ate (ate {} cookies) cookies) today)
+         (Food. "" 2 4 6 8 10))))

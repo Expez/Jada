@@ -1,6 +1,7 @@
 (ns jada.log
   (:use [jada.core])
-  (:require [clj-time.core :as t]))
+  (:require [clj-time.core :as t])
+  (:import [jada.core Food]))
 
 (defn weight
   "Sets the weight for the given `date', or if only two arguments are
@@ -29,3 +30,9 @@ provided the weight of the most recent entry in the log."
   "Gets the entry in the log representing today."
   (or (log (t/today-at-midnight))
       {}))
+
+(defn aggregate [log date]
+  "Tallies up all the food items, returns a new aggregate `Food'."
+  (if-let [day (log date)]
+    (reduce add (map #(mult (first %) (second %)) (:foods day)))
+    (Food. "" 0 0 0 0 0)))
