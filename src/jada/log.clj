@@ -16,3 +16,16 @@ provided the weight of the most recent entry in the log."
      (ate log food 1))
   ([log food amount]
      (update-in log [(t/today-at-midnight) :foods] conj [food amount])))
+
+(defn barfed
+  "The reverse the eating of `food'."
+  ([log food]
+     (barfed log food 1))
+  ([log food amount]
+     (update-in log [(t/today-at-midnight) :foods]
+                (partial remove #{[food amount]}))))
+
+(defn- today [log]
+  "Gets the entry in the log representing today."
+  (or (log (t/today-at-midnight))
+      {}))

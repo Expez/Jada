@@ -14,9 +14,16 @@
     (is (= (:weight ((weight {} today 87) today)) 87))
     (is (= (:weight ((weight {} 87) today)) 87))))
 
-(testing "eat"
+(testing "ate"
   (deftest food-is-appended
-    (is (= (:foods ((ate {} cookies) today)) [[cookies 1]])))
+    (is (= (:foods ((ate {} cookies) today))
+           [[cookies 1]])))
 
   (deftest food-is-appended-with-correct-amount
-    (is (= (:foods ((ate {} 2 cookies) today))) [[cookies 2]])))
+    (is (= (:foods ((ate {} cookies 2) today))
+           [[cookies 2]]))))
+
+(testing "barf"
+  (deftest food-is-removed
+    (is (= (:foods ((barfed (ate {} cookies 2) cookies 2) today))
+           []))))
