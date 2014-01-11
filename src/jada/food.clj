@@ -13,3 +13,9 @@
 (defn mult [{:keys [name kcal prot fat carbs fiber]} amount]
   (Food. name (* amount kcal) (* amount prot) (* amount fat) (* amount carbs)
          (* amount fiber)))
+
+(defn new-food [foods food]
+  (assoc foods (:name food) food))
+
+(defn lookup [foods name]
+  (:name foods))
