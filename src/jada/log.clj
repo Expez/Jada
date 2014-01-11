@@ -1,7 +1,7 @@
 (ns jada.log
-  (:use [jada.core])
   (:require [clj-time.core :as t])
-  (:import [jada.core Food]))
+  (:require [jada.food :refer :all])
+  (:import [jada.food Food]))
 
 (defn weight
   "Sets the weight for the given `date', or if only two arguments are

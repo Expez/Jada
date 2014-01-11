@@ -1,7 +1,7 @@
-(ns jada.core-test
-  (:require [jada.core :refer :all]
+(ns jada.food-test
+  (:require [jada.food :refer :all]
             [clojure.test :refer :all])
-  (:import [jada.core Food]))
+  (:import [jada.food Food]))
 
 (def f1 (Food. "f1" 1000 50 25 75 2))
 (def f2 (Food. "f2" 2000 70 5 5 3))

@@ -1,9 +1,9 @@
 (ns jada.log-test
   (:require [jada.log :refer :all]
-            [jada.core]
+            [jada.food]
             [clj-time.core :as t]
             [clojure.test :refer :all])
-  (:import [jada.core Food]))
+  (:import [jada.food Food]))
 
 
 (def today (t/today-at-midnight))
