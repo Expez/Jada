@@ -29,3 +29,7 @@
 
 (defn create [name kcal prot fat carbs fiber]
   {:name name :kcal kcal :prot prot :fat fat :carbs carbs :fiber fiber})
+
+(defn diff [f1 f2]
+  "Returns f1 - f2"
+  (add (map-vals #(if (number? %) (* -1 %) %) "")) f2)
