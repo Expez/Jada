@@ -1,13 +1,12 @@
 (ns jada.log-test
   (:require [jada.log :refer :all]
-            [jada.food]
+            [jada.food :as f]
             [clj-time.core :as t]
-            [clojure.test :refer :all])
-  (:import [jada.food Food]))
+            [clojure.test :refer :all]))
 
 
 (def today (t/today-at-midnight))
-(def cookies (Food. "cookies" 1 2 3 4 5))
+(def cookies (f/create "cookies" 1 2 3 4 5))
 
 (testing  "weight"
   (deftest weight-is-updated
@@ -30,4 +29,4 @@
 
 (deftest food-aggregation
   (is (= (aggregate (ate (ate {} cookies) cookies) today)
-         (Food. "" 2 4 6 8 10))))
+         (f/create "" 2 4 6 8 10))))

@@ -1,7 +1,13 @@
 (ns jada.log
   (:require [clj-time.core :as t])
-  (:require [jada.food :refer :all])
-  (:import [jada.food Food]))
+  (:require [jada.food :as f]))
+
+;;; a log is of the form {clj-time.DateTime <LogEntry>}.
+;;; a logentry has the following keys: weight, foods, bmr, plan and kind.
+;;; foods is a seq of [food-name amount]
+;;; plan indicates the diet plan we're following e.g leangains, warriordiet etc
+;;; kind is a keyword indicating what kind of day this is e.g. :training or
+;;; :rest, these are often plan specific
 
 (defn weight
   "Sets the weight for the given `date', or if only two arguments are
@@ -26,7 +32,7 @@ provided the weight of the most recent entry in the log."
      (update-in log [(t/today-at-midnight) :foods]
                 (partial remove #{[food amount]}))))
 
-(defn- today [log]
+(defn latest-entry [log]
   "Gets the entry in the log representing today."
   (or (log (t/today-at-midnight))
       {}))
@@ -34,8 +40,8 @@ provided the weight of the most recent entry in the log."
 (defn aggregate [log date]
   "Tallies up all the food items, returns a new aggregate `Food'."
   (if-let [day (log date)]
-    (reduce add (map #(mult (first %) (second %)) (:foods day)))
-    (Food. "" 0 0 0 0 0)))
+    (reduce f/add (map #(f/mult (first %) (second %)) (:foods day)))
+    (f/create "" 0 0 0 0 0)))
 
 (defn set-bmr [log bmr]
   "Sets the basal metabolic rate in the log."

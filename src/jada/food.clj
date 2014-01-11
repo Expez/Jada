@@ -1,21 +1,31 @@
 (ns jada.food)
 
-(defrecord Food [name kcal prot fat carbs fiber])
+;;; a food is a map with the following keys: name kcal prot fat carbs fiber
+
+(defn combine-with [f m1 m2]
+  "Given {:k v1 ...} and {:k v2 ...} returns {:k f(v1 v2) ...}"
+  (into {} (for [[k v1] m1
+                 :let [v2 (k m2)]
+                 :when v2]
+             [k (f v1 v2)])))
 
 (defn add
   "Add Food items"
   [& foods]
-  (letfn [(add [{k1 :kcal p1 :prot f1 :fat c1 :carbs fi1 :fiber}
-                {k2 :kcal p2 :prot f2 :fat c2 :carbs fi2 :fiber}]
-            (Food. "" (+ k1 k2) (+ p1 p2) (+ f1 f2) (+ c1 c2) (+ fi1 fi2)))]
-      (reduce add foods)))
+  (reduce (partial combine-with #(if (number? %1) (+ %1 %2) "")) foods))
 
-(defn mult [{:keys [name kcal prot fat carbs fiber]} amount]
-  (Food. name (* amount kcal) (* amount prot) (* amount fat) (* amount carbs)
-         (* amount fiber)))
+(defn map-vals [f m]
+  "maps `f' over the values in the map m."
+  (into {} (for [[k v] m] [k (f v)])))
+
+(defn mult [food amount]
+  (map-vals #(if (number? %) (* amount %) %) food))
 
 (defn new-food [foods food]
   (assoc foods (:name food) food))
 
 (defn lookup [foods name]
   (:name foods))
+
+(defn create [name kcal prot fat carbs fiber]
+  {:name name :kcal kcal :prot prot :fat fat :carbs carbs :fiber fiber})
