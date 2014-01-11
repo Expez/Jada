@@ -36,3 +36,7 @@ provided the weight of the most recent entry in the log."
   (if-let [day (log date)]
     (reduce add (map #(mult (first %) (second %)) (:foods day)))
     (Food. "" 0 0 0 0 0)))
+
+(defn set-bmr [log bmr]
+  "Sets the basal metabolic rate in the log."
+  (assoc-in log [t/today-at-midnight :bmr] bmr))
