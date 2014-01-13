@@ -32,13 +32,13 @@ provided the weight of the most recent entry in the log."
      (update-in log [(t/today-at-midnight) :foods]
                 (partial remove #{[food amount]}))))
 
-(defn latest-entry [log]
+(defn today [log]
   "Gets the entry in the log representing today."
   (or (log (t/today-at-midnight))
       {}))
 
-(defn aggregate [log date]
-  "Tallies up all the food items, returns a new aggregate `Food'."
+(defn eaten [log date]
+  "Tallies up all the food items we've eaten."
   (if-let [day (log date)]
     (reduce f/add (map #(f/mult (first %) (second %)) (:foods day)))
     (f/create "" 0 0 0 0 0)))

@@ -8,3 +8,6 @@
 
 (defn get-plan [plans name]
   (:name plans))
+
+(defn remaining [log plans]
+  "Returns the remaining macros for today.")
