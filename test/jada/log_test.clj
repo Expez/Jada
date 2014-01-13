@@ -30,3 +30,7 @@
 (deftest food-aggregation
   (is (= (log/eaten(log/ate (log/ate {} cookies) cookies) today)
          (f/create "" 2 4 6 8 10))))
+
+(deftest eaten
+  (is (= (log/eaten (log/ate {} cookies))
+         cookies)))

@@ -37,11 +37,13 @@ provided the weight of the most recent entry in the log."
   (or (log (t/today-at-midnight))
       {}))
 
-(defn eaten [log date]
-  "Tallies up all the food items we've eaten."
-  (if-let [day (log date)]
-    (reduce f/add (map #(f/mult (first %) (second %)) (:foods day)))
-    (f/create "" 0 0 0 0 0)))
+(defn eaten
+  "Tallies up all the food items we've eaten on `date' or today."
+  ([log] (eaten log (t/today-at-midnight)))
+  ([log date]
+     (if-let [day (log date)]
+       (reduce f/add (map #(f/mult (first %) (second %)) (:foods day)))
+       (f/create "" 0 0 0 0 0))))
 
 (defn set-bmr [log bmr]
   "Sets the basal metabolic rate in the log."
