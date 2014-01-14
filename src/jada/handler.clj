@@ -1,10 +1,12 @@
 (ns jada.handler
   (:require [compojure.core :refer :all]
             [compojure.handler :as handler]
-            [compojure.route :as route]))
+            [compojure.route :as route]
+            [jada.views :refer :all]))
 
 (defroutes app-routes
-  (GET "/" [] "Hello World")
+  (GET "/" [] (index-page))
+  (POST "/input" {{:keys [input]} :params} (prn-str input))
   (route/resources "/")
   (route/not-found "Not Found"))
 
