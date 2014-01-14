@@ -2,10 +2,10 @@
   (:require [jada.log :as log]
             [jada.food :as food]))
 
-(defn new-plan [^String plans name kinds]
-  "Add new diet plan with `name'.  `kinds' is a map of {:day macros},
+(defn new-plan [^String plans name macros]
+  "Add new diet plan with `name'.  `macros' is a map of {:kind macros},
   e.g {:rest {:kcal rest-day-kcal ...}."
-  (assoc plans name kinds))
+  (assoc plans name macros))
 
 (defn get-plan [plans name]
   (:name plans))
