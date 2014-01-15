@@ -12,3 +12,4 @@ pom.xml
 /.lein-repl-history
 /.nrepl-port
 /resources/public/js/.tern-port
+/resources/js/.tern-port

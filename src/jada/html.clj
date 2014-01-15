@@ -1,12 +1,23 @@
-(ns jada.views
+(ns jada.html
   (:require [hiccup.core :refer :all]
             [hiccup.page :refer :all]))
 
+(declare index-body head)
+
 (defn index-page []
   (html5
-   [:head [:title "Jada"]
-    (include-css "/css/jada.css")]
+   (head)
+   (index-body)))
+
+(defn index-body []
+  (html
    [:body
-    [:h1 "Hello World"]
-    [:form {:action "/input" :method "post"}
-     [:input {:type "text" :name "input"}]]]))
+    [:h1 "Websocket demo"]
+    [:input {:type "text" :id "message"}]]))
+
+(defn- head []
+  (html
+   [:head [:title "Jada"]
+    (include-css "/css/jada.css")
+    (include-js "js/jada.js"
+                "http://code.jquery.com/jquery-2.0.3.min.js")]))
