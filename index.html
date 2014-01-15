@@ -1,0 +1,19 @@
+<html>
+  <body>
+    <h1>WebSocket Demo</h1>
+    <input id="message" type="text"/>
+    <section id="content"></section>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js">
+    </script>
+    </script>
+    <script>
+      var ws = new WebSocket("ws://127.0.0.1:8080/websocket");
+      ws.onmessage = function(event) {
+      $('#message').val(JSON.parse(event.data).message);
+      console.log(JSON.parse(event.data));
+      }
+      $('#message').change(function(){
+        ws.send(JSON.stringify({type: "downcase", message: $("#message").val()}));});
+    </script>
+  </body>
+</html>

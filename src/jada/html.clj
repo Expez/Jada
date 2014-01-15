@@ -9,5 +9,4 @@
    [:body
     [:h1 "Hello World"]
     [:form {:action "/input" :method "post"}
-     [:input {:type "text" :name "input"}]
-     [:input {:type "submit" :value "Submit"}]]]))
+     [:input {:type "text" :name "input"}]]]))
