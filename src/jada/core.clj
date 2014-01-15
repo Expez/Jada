@@ -5,10 +5,15 @@
   (:import [org.webbitserver WebServer WebServers WebSocketHandler HttpHandler]
            [org.webbitserver.handler StaticFileHandler]))
 
+(defn foo [& args]
+  [pr-str args])
+
 (defn on-message [connection json-message]
-  (let [message (-> json-message json/read-json (:message))]
-    (.send connection (json/json-str
-                       {:type "downcase" :message (str/upper-case message) }))))
+  (let [message (json/read-json json-message)
+        f (:fn message)
+        args (:args message)]
+    (prn "message " message "f " f "args " args)
+    (.send connection (apply (resolve (symbol f)) args))))
 
 (defn static-html-handler [html]
   "Creates a handler that serves up static HTML."

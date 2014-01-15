@@ -1,17 +1,11 @@
 (function () {
-  var httpRequest;
-  if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-    httpRequest = new XMLHttpRequest();
-  } else if (window.ActiveXObject) { // IE 8 and older
-    httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-  }
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState === 4) {
-      console.log("state change");
-    } else {
-      console.log("Something went wrong");
-    }
+  var ws = new WebSocket("ws://127.0.0.1:8080/websocket");
+  ws.onmessage = function(event) {
+    console.log(event.data);
   };
-  httpRequest.open('GET', 'localhost:3000/val', true);
-  httpRequest.send(null);
+  ws.onopen = function() {
+    var msg = JSON.stringify({fn: "foo", args: [1, 2, 3]});
+    ws.send(msg);
+  };
+
 }());

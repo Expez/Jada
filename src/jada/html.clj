@@ -13,7 +13,7 @@
   (html
    [:body
     [:h1 "Websocket demo"]
-    [:input {:type "text" :id "message"}]]))
+    [:input {:type "text" :id "box"}]]))
 
 (defn- head []
   (html
