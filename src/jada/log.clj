@@ -1,6 +1,7 @@
 (ns jada.log
   (:require [clj-time.core :as t])
-  (:require [jada.food :as f]))
+  (:require [jada.food :as f])
+  (:refer-clojure :exclude [empty]))
 
 ;;; a log is of the form {clj-time.DateTime <LogEntry>}.
 ;;; a logentry has the following keys: weight, foods, bmr, plan and kind.
@@ -8,6 +9,8 @@
 ;;; plan indicates the diet plan we're following e.g leangains, warriordiet etc
 ;;; kind is a keyword indicating what kind of day this is e.g. :training or
 ;;; :rest, these are often plan specific
+
+(declare empty)
 
 (defn weight
   "Sets the weight for the given `date', or if only two arguments are
@@ -35,7 +38,14 @@ provided the weight of the most recent entry in the log."
 (defn today [log]
   "Gets the entry in the log representing today."
   (or (log (t/today-at-midnight))
-      {}))
+      (empty)))
+
+(defn- empty []
+  {:weight 0
+   :foods []
+   :bmr 0
+   :plan ""
+   :kind nil})
 
 (defn eaten
   "Tallies up all the food items we've eaten on `date' or today."
