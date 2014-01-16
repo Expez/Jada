@@ -12,13 +12,9 @@ ws.onmessage = function(event) {
 $('#weight').keypress(function (e) {
   if (e.which == 13) {
     e.preventDefault();
-    console.log("1");
     var sender = "#weight-form";
-    console.log("2");
     var val = $("#weight").val();
-    console.log("3");
     if(!val){
-      console.log("4");
       return;
     }
     console.log("sending val: " + val);

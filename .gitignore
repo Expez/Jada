@@ -13,3 +13,4 @@ pom.xml
 /.nrepl-port
 /resources/public/js/.tern-port
 /resources/js/.tern-port
+/log
