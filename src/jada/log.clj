@@ -1,7 +1,9 @@
 (ns jada.log
-  (:require [clj-time.core :as t])
-  (:require [jada.food :as f])
-  (:refer-clojure :exclude [empty]))
+  (:require [clj-time.core :as t]
+            [clj-time.format :as tf]
+            [jada.util :as util]
+            [jada.food :as f])
+  (:refer-clojure :exclude [empty get]))
 
 ;;; a log is of the form {clj-time.DateTime <LogEntry>}.
 ;;; a logentry has the following keys: weight, foods, bmr, plan and kind.
@@ -58,3 +60,19 @@ provided the weight of the most recent entry in the log."
 (defn set-bmr [log bmr]
   "Sets the basal metabolic rate in the log."
   (assoc-in log [t/today-at-midnight :bmr] bmr))
+
+(defn get []
+  (if (.exists (clojure.java.io/as-file "log"))
+    (util/map-keys (partial tf/parse (tf/formatters :basic-date-time))
+                   (with-open [r (java.io.PushbackReader. (clojure.java.io/reader "log"))]
+                     (binding [*read-eval* false]
+                       (read r))))
+    {}))
+
+(defn unparse-all-dates [log]
+  (util/map-keys (partial tf/unparse (tf/formatters :basic-date-time)) log))
+
+(defn save [log]
+  (with-open [w (clojure.java.io/writer "log")]
+    (binding [*out* w]
+      (pr (unparse-all-dates log)))))

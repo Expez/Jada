@@ -1,4 +1,5 @@
-(ns jada.food)
+(ns jada.food
+  (:require [jada.util :as util]))
 
 ;;; a food is a map with the following keys: name kcal prot fat carbs fiber
 
@@ -14,12 +15,8 @@
   [& foods]
   (reduce (partial combine-with #(if (number? %1) (+ %1 %2) "")) foods))
 
-(defn map-vals [f m]
-  "maps `f' over the values in the map m."
-  (into {} (for [[k v] m] [k (f v)])))
-
 (defn mult [food amount]
-  (map-vals #(if (number? %) (* amount %) %) food))
+  (util/map-vals #(if (number? %) (* amount %) %) food))
 
 (defn new-food [foods food]
   (assoc foods (:name food) food))
@@ -32,4 +29,4 @@
 
 (defn diff [f1 f2]
   "Returns f1 - f2"
-  (add (map-vals #(if (number? %) (* -1 %) "") f2) f1))
+  (add (util/map-vals #(if (number? %) (* -1 %) "") f2) f1))
