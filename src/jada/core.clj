@@ -10,7 +10,6 @@
         f (:fn message)
         args (list (:args message) (:sender message) )
         handler (resolve (symbol "jada.handlers" f))]
-    (prn "message: " message)
     (when handler
       (.send connection (json/write-str (apply handler args))))))
 
