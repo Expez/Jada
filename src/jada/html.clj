@@ -2,7 +2,7 @@
   (:require [hiccup.core :refer :all]
             [hiccup.page :refer :all]))
 
-(declare index-body head box inner-box)
+(declare index-body head weight-form weight)
 
 (defn index-page []
   (html5
@@ -13,7 +13,7 @@
   (html
    [:body
     [:h1 "Jada"]
-    (box nil)
+    (weight-form nil)
     (include-js "js/jada.js")]))
 
 (defn- head []
@@ -22,13 +22,12 @@
     [:title "Jada"]
     (include-js "http://code.jquery.com/jquery-2.0.3.min.js")]))
 
-(defn- box [val]
+(defn- weight-form [val]
   (html
-   [:form {:id "box"}
-    (inner-box val)
+   [:form {:id "weight-form"}
+    (weight val)
     ]))
 
-(defn inner-box [val]
+(defn weight [val]
   (html
-   [:input {:type "text" :value val :id "input"}]
-   [:input {:type "submit" :value "Submit"}]))
+   [:input {:type "text" :value val :id "weight"}]))
