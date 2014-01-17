@@ -9,3 +9,7 @@
     {:action :replace
      :value weight
      :recipient recipient}))
+
+(defn add-food [{:keys [name kcal prot fat carbs fiber]} recipient]
+  {:action :none
+   :recipient :none})
