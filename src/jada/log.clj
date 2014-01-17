@@ -2,8 +2,11 @@
   (:require [clj-time.core :as t]
             [clj-time.format :as tf]
             [jada.util :as util]
-            [jada.food :as f])
-  (:refer-clojure :exclude [empty get]))
+            [jada.food :as f]
+            [monger.core :as mg]
+            [monger.collection :as mc]
+            [clojure.data.json]
+            [monger.joda-time]))
 
 ;;; a log is of the form {clj-time.DateTime <LogEntry>}.
 ;;; a logentry has the following keys: weight, foods, bmr, plan and kind.
@@ -12,12 +15,32 @@
 ;;; kind is a keyword indicating what kind of day this is e.g. :training or
 ;;; :rest, these are often plan specific
 
-(declare empty)
+(defn entry-for
+  "Returns the log entry for `date'"
+  [date]
+  (let [entry (mc/find-maps "log" {:date date})]
+    (if-not (empty? entry)
+      (first entry)
+      nil)))
+
+(defn- new
+  "Creates a new log entry for `date' or for today.  Using default
+values from yesterday"
+  ([] (empty (t/today-at-midnight)))
+  ([date]
+     (let [yesterday (entry-for (t/minus (t/today-at-midnight) (t/days 1)))
+           entry {:weight 0
+                  :foods []
+                  :bmr (:bmr yesterday)
+                  :plan (:plan yesterday)
+                  :kind (:kind yesterday)
+                  :date date}]
+       (mc/insert-and-return "log" entry))))
 
 (defn weight
   "Sets the weight for the given `date', or if only two arguments are
 provided the weight of the most recent entry in the log."
-  ([log date weight ]
+  ([log date weight]
      (assoc-in log [date :weight] weight))
   ([log weight]
      (assoc-in log [(t/today-at-midnight) :weight] weight)))
@@ -37,17 +60,9 @@ provided the weight of the most recent entry in the log."
      (update-in log [(t/today-at-midnight) :foods]
                 (partial remove #{[food amount]}))))
 
-(defn today [log]
+(defn today []
   "Gets the entry in the log representing today."
-  (or (log (t/today-at-midnight))
-      (empty)))
-
-(defn- empty []
-  {:weight 0
-   :foods []
-   :bmr 0
-   :plan ""
-   :kind nil})
+  (entry-for (t/today-at-midnight)))
 
 (defn eaten
   "Tallies up all the food items we've eaten on `date' or today."
@@ -61,18 +76,8 @@ provided the weight of the most recent entry in the log."
   "Sets the basal metabolic rate in the log."
   (assoc-in log [t/today-at-midnight :bmr] bmr))
 
-(defn get []
-  (if (.exists (clojure.java.io/as-file "log"))
-    (util/map-keys (partial tf/parse (tf/formatters :basic-date-time))
-                   (with-open [r (java.io.PushbackReader. (clojure.java.io/reader "log"))]
-                     (binding [*read-eval* false]
-                       (read r))))
-    {}))
-
-(defn unparse-all-dates [log]
-  (util/map-keys (partial tf/unparse (tf/formatters :basic-date-time)) log))
-
-(defn save [log]
-  (with-open [w (clojure.java.io/writer "log")]
-    (binding [*out* w]
-      (pr (unparse-all-dates log)))))
+(defn update-in! [date [k & ks] fn & args]
+  "Updates the log entry for `date'"
+  (let [entry (entry-for date)
+        new-entry (update-in entry (list* k ks) fn args)]
+    (mc/update "log" new-entry)))

@@ -1,9 +1,11 @@
 (ns jada.core
   (:require [clojure.data.json :as json]
             [jada.handlers]
+            [monger.core :as mg]
             [jada.html :as html])
   (:import [org.webbitserver WebServer WebServers WebSocketHandler HttpHandler]
-           [org.webbitserver.handler StaticFileHandler]))
+           [org.webbitserver.handler StaticFileHandler]
+           [com.mongodb MongoOptions ServerAddress]))
 
 (defn on-message [connection json-message]
   (let [message (json/read-json json-message)
@@ -23,6 +25,8 @@
         (.end)))))
 
 (defn -main []
+  (mg/connect!)
+  (mg/set-db! (mg/get-db "jada"))
   (doto (WebServers/createWebServer 8080)
     (.add "/websocket"
           (proxy [WebSocketHandler] []
