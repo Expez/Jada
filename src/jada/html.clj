@@ -21,8 +21,10 @@
   (html
    [:head
     [:title "Jada"]
+    (include-css "//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css")
     (include-js "http://code.jquery.com/jquery-2.0.3.min.js"
-                "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js")]))
+                "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"
+                "//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js")]))
 
 (defn- weight-form [val]
   (html
