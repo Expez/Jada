@@ -1,5 +1,5 @@
 (ns jada.core
-  (:require [clojure.data.json :as json]
+  (:require [cheshire.core :refer :all]
             [jada.handlers]
             [monger.core :as mg]
             [jada.html :as html])
@@ -8,12 +8,12 @@
            [com.mongodb MongoOptions ServerAddress]))
 
 (defn on-message [connection json-message]
-  (let [message (json/read-json json-message)
+  (let [message (parse-string json-message true)
         f (:fn message)
         args (list (:args message) (:sender message) )
         handler (resolve (symbol "jada.handlers" f))]
     (when handler
-      (.send connection (json/write-str (apply handler args))))))
+      (.send connection (generate-string (apply handler args))))))
 
 (defn static-html-handler [html]
   "Creates a handler that serves up static HTML."

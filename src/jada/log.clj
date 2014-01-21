@@ -5,7 +5,6 @@
             [jada.food :as f]
             [monger.core :as mg]
             [monger.collection :as mc]
-            [clojure.data.json]
             [monger.joda-time]))
 
 ;;; a log is of the form {clj-time.DateTime <LogEntry>}.
@@ -43,7 +42,8 @@ provided the weight of the most recent entry in the log."
   ([log date weight]
      (assoc-in log [date :weight] weight))
   ([log weight]
-     (assoc-in log [(t/today-at-midnight) :weight] weight)))
+     (assoc-in log [(t/today-at-midnight) :weight] weight))
+  ([weight] (throw (RuntimeException. "Not implemented"))))
 
 (defn ate
   "Log that we ate `food', or that we ate `amount' of `food'."
