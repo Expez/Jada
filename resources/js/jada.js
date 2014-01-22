@@ -4,9 +4,9 @@ ws.onmessage = function(event) {
   var action = message.action;
   var recipient = message.recipient;
   var value = message.value;
-  if(action === "replace") {
-    $(recipient).val(value);
-  }
+  // if(action === "replace") {
+  //   $(recipient).val(value);
+  // }
 };
 
 $('#weight').keypress(function (e) {
@@ -18,7 +18,7 @@ $('#weight').keypress(function (e) {
       return;
     }
     console.log("sending val: " + val);
-    ws.send(JSON.stringify({fn: "weight", args: val, sender: sender}));
+    ws.send(JSON.stringify({request: "weight", weight: val, sender: sender}));
     return false;
   }
 });
@@ -33,7 +33,7 @@ $('#food-form').submit(function(e) {
   var f = _.partial(dropPrefix, "food-");
   var keys = fields.map(f);
   var argMap = createMap(keys, values);
-  ws.send(JSON.stringify({fn: "add-food", args: argMap, sender: "#food-form"}));
+  ws.send(JSON.stringify({request: "add food", args: argMap, sender: "#food-form"}));
 });
 
 // vararg input with ids of the inputs fields

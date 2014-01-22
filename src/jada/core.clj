@@ -1,7 +1,8 @@
 (ns jada.core
   (:require [cheshire.core :refer :all]
-            [jada.handlers]
+            [jada.handler :refer :all]
             [monger.core :as mg]
+            [jada.log :as log]
             [jada.html :as html])
   (:import [org.webbitserver WebServer WebServers WebSocketHandler HttpHandler]
            [org.webbitserver.handler StaticFileHandler]
@@ -9,11 +10,8 @@
 
 (defn on-message [connection json-message]
   (let [message (parse-string json-message true)
-        f (:fn message)
-        args (list (:args message) (:sender message) )
-        handler (resolve (symbol "jada.handlers" f))]
-    (when handler
-      (.send connection (generate-string (apply handler args))))))
+        reply (handle message)]
+    (.send connection (generate-string reply))))
 
 (defn static-html-handler [html]
   "Creates a handler that serves up static HTML."

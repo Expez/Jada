@@ -1,6 +1,7 @@
 (ns jada.log
   (:require [clj-time.core :as t]
             [jada.util :as util]
+            [jada.handler :refer :all]
             [jada.food :as f]
             [monger.core :as mg]
             [monger.collection :as mc]
@@ -84,3 +85,11 @@ provided the weight of the most recent entry in the log."
 (defn set-bmr [date bmr]
   "Sets the basal metabolic rate in the log, for `date'."
   (assoc-in! date [:bmr] bmr))
+
+(defmethod handle "weight"
+  [{w :weight recipient :recipient}]
+  (let [w (Double/parseDouble w)]
+    (weight w)
+    {:action :replace
+     :value w
+     :recipient recipient}))
