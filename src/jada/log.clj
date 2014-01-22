@@ -1,6 +1,5 @@
 (ns jada.log
   (:require [clj-time.core :as t]
-            [clj-time.format :as tf]
             [jada.util :as util]
             [jada.food :as f]
             [monger.core :as mg]
@@ -12,18 +11,6 @@
 ;;; plan indicates the diet plan we're following e.g leangains, warriordiet etc
 ;;; kind is a keyword indicating what kind of day this is e.g. :training or
 ;;; :rest, these are often plan specific
-
-
-(defn update-in! [date [k & ks] fn & args]
-  "Updates the log entry for `date'"
-  (let [entry (entry-for date)
-        new-entry (update-in entry (list* k ks) fn args)]
-    (mc/update "log" {:date date} new-entry)))
-
-(defn assoc-in! [date [k & ks] v]
-  (let [entry (entry-for date)
-        new-entry (assoc-in entry (list* k ks) value)]
-    (mc/update "log" {:date date} new-entry)))
 
 (defn- new-entry
   "Creates a new log entry for `date' or for today.  Using default
@@ -48,13 +35,24 @@ values from the previous day."
     entry
     (new-entry date)))
 
+(defn update-in! [date [k & ks] fn & args]
+  "Updates the log entry for `date'"
+  (let [entry (entry-for date)
+        new-entry (apply update-in entry (list* k ks) fn args)]
+    (mc/update "log" {:date date} new-entry)))
+
+(defn assoc-in! [date [k & ks] v]
+  (let [entry (entry-for date)
+        new-entry (assoc-in entry (list* k ks) v)]
+    (mc/update "log" {:date date} new-entry)))
+
 (defn weight
   "Sets the weight for the given `date', or if only two arguments are
 provided the weight of the most recent entry in the log."
   ([w]
-     (weight (t/today-at-midnight) weight))
+     (weight (t/today-at-midnight) w))
   ([date w]
-     (assoc-in! date [:weight] weight)))
+     (assoc-in! date [:weight] w)))
 
 (defn ate
   "Log that we ate `food', or that we ate `amount' of `food'."

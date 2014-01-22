@@ -2,24 +2,25 @@
   (:require [jada.log :as log]
             [jada.food :as f]
             [clj-time.core :as t]
+            [cheshire.core :refer :all]
             [monger.core :as mg]
             [monger.collection :as mc]
+            [monger.joda-time]
             [clojure.test :refer :all]))
 
-(defn with-with-test-db [f]
+(defn with-test-db [f]
   "Connects and disconnects to a fresh test db."
   (mg/connect!)
-  (mg/drop-db (mg/get-db "test"))
   (mg/use-db! "test")
   (f)
   (mg/disconnect!))
 
 (defn with-temporary-entries [f]
   "Snapshots the db, performs f, then loads the snapshot."
-  (let [all-records (mc/find-maps "test")]
+  (let [all-records (mc/find-maps "log")]
     (f)
-    (mc/remove "test")
-    (mc/insert-batch all-records)))
+    (mc/remove "log")
+    (mc/insert-batch "log" all-records)))
 
 (use-fixtures :once with-test-db)
 (use-fixtures :each with-temporary-entries)
@@ -37,22 +38,24 @@
 
 (testing "ate"
   (deftest food-is-appended
-    (is (= (:foods ((log/ate {} cookies) today))
+    (log/ate today cookies)
+    (is (= (:foods (log/today))
            [[cookies 1]])))
 
   (deftest food-is-appended-with-correct-amount
-    (is (= (:foods ((log/ate {} cookies 2) today))
+    (log/ate today cookies 2)
+    (is (= (:foods (log/today))
            [[cookies 2]]))))
 
 (testing "barf"
   (deftest food-is-removed
-    (is (= (:foods ((log/barfed (log/ate {} cookies 2) cookies 2) today))
+    (log/ate today cookies 2)
+    (log/barfed today cookies 2)
+    (is (= (:foods (log/today))
            []))))
 
-(deftest food-aggregation
-  (is (= (log/eaten(log/ate (log/ate {} cookies) cookies) today)
-         (f/create "" 2 4 6 8 10))))
-
 (deftest eaten
-  (is (= (log/eaten (log/ate {} cookies))
-         cookies)))
+  (log/ate today cookies)
+  (log/ate today cookies)
+  (is (= (log/eaten)
+         (f/create "" 2 4 6 8 10))))
