@@ -1,5 +1,6 @@
 (ns jada.food
-  (:require [jada.util :as util]))
+  (:require [jada.util :as util]
+            [monger.collection :as mc]))
 
 ;;; a food is a map with the following keys: name kcal prot fat carbs fiber
 
@@ -18,11 +19,11 @@
 (defn mult [food amount]
   (util/map-vals #(if (number? %) (* amount %) %) food))
 
-(defn new-food [foods food]
-  (assoc foods (:name food) food))
+(defn insert-food [food]
+  (mc/insert-and-return "foods" food))
 
-(defn lookup [foods name]
-  (:name foods))
+(defn lookup [name]
+  (mc/find-one-as-map "foods" {:name name}))
 
 (defn create [name kcal prot fat carbs fiber]
   {:name name :kcal kcal :prot prot :fat fat :carbs carbs :fiber fiber})
