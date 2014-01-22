@@ -24,7 +24,7 @@
   (mc/insert-and-return "foods" food))
 
 (defn lookup [name]
-  (mc/find-one-as-map "foods" {:name name}))
+  (dissoc (mc/find-one-as-map "foods" {:name name}) :_id ))
 
 (defn create [name kcal prot fat carbs fiber]
   {:name name :kcal kcal :prot prot :fat fat :carbs carbs :fiber fiber})
