@@ -1,16 +1,19 @@
 (ns jada.core
   (:require [cheshire.core :refer :all]
             [jada.handler :refer :all]
+            [taoensso.timbre :as timbre]
             [monger.core :as mg]
             [jada.log :as log]
             [jada.html :as html])
   (:import [org.webbitserver WebServer WebServers WebSocketHandler HttpHandler]
            [org.webbitserver.handler StaticFileHandler]
            [com.mongodb MongoOptions ServerAddress]))
+(timbre/refer-timbre)
 
 (defn on-message [connection json-message]
   (let [message (parse-string json-message true)
         reply (handle message)]
+    (info "Received message" message)
     (.send connection (generate-string reply))))
 
 (defn static-html-handler [html]

@@ -5,6 +5,7 @@
   :license {:name "MIT" :url "http://opensource.org/licenses/MIT" }
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [cheshire "5.3.1"]
+                 [com.taoensso/timbre "3.0.0-RC4"]
                  [hiccup "1.0.4"]
                  [com.novemberain/monger "1.7.0"]
                  [org.webbitserver/webbit "0.4.15"]
