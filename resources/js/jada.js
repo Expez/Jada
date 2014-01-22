@@ -33,7 +33,7 @@ $('#food-form').submit(function(e) {
   var f = _.partial(dropPrefix, "food-");
   var keys = fields.map(f);
   var argMap = createMap(keys, values);
-  ws.send(JSON.stringify({request: "add food", args: argMap, sender: "#food-form"}));
+  ws.send(JSON.stringify({request: "add food", food: argMap, sender: "#food-form"}));
 });
 
 // vararg input with ids of the inputs fields
