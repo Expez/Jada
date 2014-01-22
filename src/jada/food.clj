@@ -1,6 +1,6 @@
 (ns jada.food
   (:require [jada.util :as util]
-            #_[jada.handler :refer :all]
+            [jada.handler :refer :all]
             [monger.collection :as mc]))
 
 ;;; a food is a map with the following keys: name kcal prot fat carbs fiber
@@ -33,7 +33,10 @@
   "Returns f1 - f2"
   (add (util/map-vals #(if (number? %) (* -1 %) "") f2) f1))
 
-#_(defmethod handle "add food"
-  [{:keys [name kcal prot fat carbs fiber]} recipient]
-  {:action :none
-   :recipient :none})
+(defmethod handle "add food"
+  [{:keys [food]}]
+  (insert-food food))
+
+(defn list-all []
+  "Returns a map of all foods in the db"
+  (map #(dissoc % :_id) (mc/find-maps "foods")))
