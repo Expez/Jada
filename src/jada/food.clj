@@ -41,6 +41,6 @@
   "Returns a map of all foods in the db"
   (map #(dissoc % :_id) (mc/find-maps "foods")))
 
-(defn handle "lookup food"
-  [{:keys name}]
+(defmethod handle "lookup food"
+  [{:keys [name]}]
   (lookup name))

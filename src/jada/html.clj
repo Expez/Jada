@@ -5,7 +5,7 @@
             [hiccup.form :refer :all]
             [jada.food :as food]))
 
-(declare index-body head weight-form weight food-form food-list)
+(declare index-body head weight-form weight food-form food-list food food-item)
 
 (defn index-page []
   (html5
@@ -67,5 +67,5 @@
    (unordered-list (map  :name (food/list-all)))])
 
 (defn- food-item []
-  (label "food-item-kcal" "Kcal")
+  (label "food-item-kcal" "Kcal: ")
   [:span {:id "food-item-kcal"}])
