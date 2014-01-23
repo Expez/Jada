@@ -9,18 +9,13 @@ ws.onmessage = function(event) {
   // }
 };
 
-$('#weight').keypress(function (e) {
-  if (e.which == 13) {
-    e.preventDefault();
-    var sender = "#weight-form";
-    var val = $("#weight").val();
-    if(!val){
-      return;
-    }
-    console.log("sending val: " + val);
-    ws.send(JSON.stringify({request: "weight", weight: val, sender: sender}));
-    return false;
+$('#weight').submit(function (e) {
+  var val = $("#weight").val();
+  if(!val){
+    return;
   }
+  ws.send(JSON.stringify({request: "weight", weight: val}));
+  return false;
 });
 
 ws.onopen = function() {
@@ -28,12 +23,12 @@ ws.onopen = function() {
 
 $('#food-form').submit(function(e) {
   var fields = ["food-name", "food-kcal", "food-prot", "food-fat",
-                         "food-carbs", "food-fiber"];
+                "food-carbs", "food-fiber"];
   var values = inputsToArray.apply(null, fields);
   var f = _.partial(dropPrefix, "food-");
   var keys = fields.map(f);
   var argMap = createMap(keys, values);
-  ws.send(JSON.stringify({request: "add food", food: argMap, sender: "#food-form"}));
+  ws.send(JSON.stringify({request: "add food", food: argMap}));
 });
 
 // vararg input with ids of the inputs fields
@@ -57,3 +52,9 @@ var createMap = function(keys, values) {
   }
   return map;
 };
+
+$("#food-list li").on("click", function(e) {
+  if(e.target && e.target.nodeName == "LI") {
+    console.log(e.target.id + " was clicked");
+  }
+});
