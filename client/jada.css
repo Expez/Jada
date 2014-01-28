@@ -1,1 +1,14 @@
 /* CSS declarations go here */
+#addFood {
+  width: 240px;
+  clear: both;
+}
+
+#addFood h3 {
+  text-align: center;
+}
+#addFood input {
+  width: 100%:
+  clear: both;
+  float: right
+}

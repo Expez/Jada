@@ -14,3 +14,5 @@ pom.xml
 /resources/public/js/.tern-port
 /resources/js/.tern-port
 /log
+.meteor/
+.tern-project

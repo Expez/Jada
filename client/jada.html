@@ -6,11 +6,37 @@
   <div style="float: right">
     {{loginButtons align="right"}}
   </div>
-  {{> hello}}
+  {{> addFood}}
 </body>
 
-<template name="hello">
-  <h1>Hello World!</h1>
-  {{greeting}}
-  <input type="button" value="Click" />
+<template name="foods">
+  <ul>
+    {{#each food}}
+    <li>
+      {{name}}
+    </li>
+    {{/each}}
+  </ul>
+</template>
+
+<template name="addFood">
+  <form id="addFood">
+    <h3>Add food</h3>
+    <p><label>Name:</label> <input type="text" id="name"/></p>
+    <p><label>Kcal:</label> <input type="text" id="kcal"/></p>
+    <p><label>Prot:</label> <input type="text" id="prot"/></p>
+    <p><label>Fat:</label> <input type="text" id="fat"/></p>
+    <p><label>Carbs:</label> <input type="text" id="carbs"/></p>
+    <p><label>Fiber:</label> <input type="text" id="fiber"/></p>
+    <input type="submit" value="Submit"/>
+  </form>
+</template>
+
+<template name="displayFood">
+  <label>Name:</label>{{food.name}}
+  <label>Kcal:</label>{{food.kcal}}
+  <label>Prot:</label>{{food.prot}}
+  <label>Fat:</label>{{food.fat}}
+  <label>Carbs:</label>{{food.carbs}}
+  <label>Fiber:</label>{{food.fat}}
 </template>
