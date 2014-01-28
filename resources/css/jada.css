@@ -8,3 +8,17 @@ h1 {
   width: 100px;
   overflow: auto
 }
+#add-food {
+  width: 240px;
+  clear: both;
+}
+
+#add-food h3 {
+  text-align: center;
+}
+
+#add-food input {
+  width: 100%:
+  clear: both;
+  float: right
+}

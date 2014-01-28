@@ -48,14 +48,15 @@
 
 (defn- food-form []
   (html
-   [:form {:id "food-form" :role "form" :class "form-inline"}
+   [:div {:id "add-food"}
+    [:form {:id "food-form" :role "form"}
     (input-field "food-name" "Name: ")
     (input-field "food-kcal" "Kcal: ")
     (input-field "food-prot" "Prot: ")
     (input-field "food-fat" "Fat: ")
     (input-field "food-carbs" "Carbs: ")
     (input-field "food-fiber" "Fiber: ")
-    [:input {:type "submit" :value "Add food" :class "btn btn-default"}]]))
+    [:input {:type "submit" :value "Add food" :class "btn btn-default"}]]]))
 
 (defn food []
   [:div {:id "food"}
