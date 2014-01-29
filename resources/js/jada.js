@@ -4,9 +4,9 @@ ws.onmessage = function(event) {
   var action = message.action;
   var recipient = message.recipient;
   var value = message.value;
-  // if(action === "replace") {
-  //   $(recipient).val(value);
-  // }
+  if(action === "replace") {
+    $(recipient).html(message.html);
+  }
 };
 
 $('#weight').submit(function (e) {
@@ -55,6 +55,7 @@ var createMap = function(keys, values) {
 
 $("#food-list li").on("click", function(e) {
   if(e.target && e.target.nodeName == "LI") {
-    console.log(e.target.id + " was clicked");
+    var foodName = e.target.firstChild.data;
+    ws.send(JSON.stringify({request: "food-item", name: foodName}));
   }
 });

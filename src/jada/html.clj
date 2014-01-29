@@ -3,7 +3,9 @@
             [hiccup.page :refer :all]
             [hiccup.element :refer :all]
             [hiccup.form :refer :all]
-            [jada.food :as food]))
+            [hiccup.util :refer :all]
+            [jada.food :as food]
+            [jada.handler :refer :all]))
 
 (declare index-body head weight-form weight food-form food-list food food-item)
 
@@ -50,23 +52,34 @@
   (html
    [:div {:id "add-food"}
     [:form {:id "food-form" :role "form"}
-    (input-field "food-name" "Name: ")
-    (input-field "food-kcal" "Kcal: ")
-    (input-field "food-prot" "Prot: ")
-    (input-field "food-fat" "Fat: ")
-    (input-field "food-carbs" "Carbs: ")
-    (input-field "food-fiber" "Fiber: ")
-    [:input {:type "submit" :value "Add food" :class "btn btn-default"}]]]))
+     (input-field "food-name" "Name: ")
+     (input-field "food-kcal" "Kcal: ")
+     (input-field "food-prot" "Prot: ")
+     (input-field "food-fat" "Fat: ")
+     (input-field "food-carbs" "Carbs: ")
+     (input-field "food-fiber" "Fiber: ")
+     [:input {:type "submit" :value "Add food" :class "btn btn-default"}]]]))
 
 (defn food []
   [:div {:id "food"}
    (food-list)
-   (food-item)])
+   [:div {:id "food-item"}]])
 
 (defn- food-list []
-  [:div {:id "food-list"}
-   (unordered-list (map  :name (food/list-all)))])
+  (unordered-list {:id "food-list"} (map :name (food/list-all))))
 
-(defn- food-item []
-  (label "food-item-kcal" "Kcal: ")
-  [:span {:id "food-item-kcal"}])
+(defn food-item [food]
+  (html
+   [:h3 (:name food)]
+   [:table
+    [:tr
+     [:td "Kcal: "]
+     [:td (:kcal food)]]
+    ]))
+
+(defmethod handle "food-item"
+  [{:keys [name]}]
+  (let [food (food/lookup name)]
+    {:action :replace
+     :recipient "#food-item"
+     :html (food-item food)}))
