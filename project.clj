@@ -10,4 +10,6 @@
                  [com.novemberain/monger "1.7.0"]
                  [org.webbitserver/webbit "0.4.15"]
                  [org.clojure/tools.trace "0.7.6"]
-                 [clj-time "0.6.0"]])
+                 [clj-time "0.6.0"]
+                 [org.clojure/tools.namespace "0.2.1"]
+                 [ns-tracker "0.2.1"]])
