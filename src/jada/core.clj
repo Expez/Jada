@@ -5,27 +5,15 @@
             [jada.html :as html]
             [jada.log]
             [monger.core :as mg]
+            [taoensso.timbre :as timbre :refer [info]]
             [ns-tracker.core :refer [ns-tracker]]
-            [taoensso.timbre :as timbre :refer [info]])
+            [liberator.core :refer [resource defresource]]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.adapter.jetty :refer [run-jetty]]
+            [compojure.core :refer [defroutes ANY]])
   (:import [com.mongodb MongoOptions ServerAddress]
-           [java.nio.file FileSystems StandardWatchEventKinds]
-           [org.webbitserver WebServer WebServers WebSocketHandler HttpHandler]
-           [org.webbitserver.handler StaticFileHandler]))
-
-(defn on-message [connection json-message]
-  (let [message (parse-string json-message true)
-        reply (handle message)]
-    (info "Received message" message)
-    (.send connection (generate-string reply))))
-
-(defn static-html-handler [html]
-  "Creates a handler that serves up static HTML."
-  (reify HttpHandler
-    (handleHttpRequest [this request response control]
-      (doto response
-        (.header "Content-type" "text/html")
-        (.content html)
-        (.end)))))
+           [java.nio.file FileSystems StandardWatchEventKinds]))
 
 (defn- auto-reload* [dirs]
   (let [modified-namespaces (ns-tracker dirs)
@@ -48,14 +36,20 @@
   [dirs]
   (.start (Thread. (partial auto-reload* dirs))))
 
+(defresource parametrized [x]
+  :available-media-types ["text/html"]
+  :handle-ok (fn [ctx] (prn-str "Context: " ctx "parameter: " x)))
+
+(defroutes app
+  #_(ANY "/foo" [] (resource :available-media-types ["text/html"]
+                             :handle-ok (fn [ctx] (prn-str "x: " (get-in ctx [:request :params :x])))))
+  (ANY "/foo/:x" [x] (parametrized x)))
+
+(def handler
+  (-> app
+      (wrap-keyword-params)
+      (wrap-params)))
+
 (defn -main []
-  (mg/connect!)
-  (mg/set-db! (mg/get-db "jada"))
   (auto-reload ["src/jada"])
-  (doto (WebServers/createWebServer 8080)
-    (.add "/websocket"
-          (proxy [WebSocketHandler] []
-            (onOpen [c] (println "opened" c))
-            (onClose [c] (println "closed" c))
-            (onMessage [c j] (on-message c j))))
-    (.start)))
+  (run-jetty #'handler {:port 8081}))
