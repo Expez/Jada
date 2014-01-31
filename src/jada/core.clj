@@ -40,7 +40,8 @@
             events (.pollEvents key)]
         (if (not-every? #(= (.kind %) StandardWatchEventKinds/OVERFLOW) events)
           (doseq [ns-sym (modified-namespaces)]
-            (require ns-sym :reload)))
+            (require ns-sym :reload)
+            (info "Reloaded " ns-sym)))
         (.reset key)))))
 
 (defn auto-reload

@@ -1,8 +1,15 @@
-Jada.Router.map(function() {
-  // put your routes here
+App.Router.map(function() {
+  this.route("food");
+  this.route("log", { path: "/log" });
 });
 
-Jada.IndexRoute = Ember.Route.extend({
+App.FoodRoute = Ember.Route.extend({
+  model: function() {
+    return this.store.find('food');
+  }
+});
+
+App.IndexRoute = Ember.Route.extend({
   model: function() {
     return ['red', 'yellow', 'blue'];
   }

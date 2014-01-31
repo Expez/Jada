@@ -1,4 +1,7 @@
 {
+ "loadEagerly": [
+    "libs/*.js"
+  ],
   "libs": [
     "browser",
     "jquery",

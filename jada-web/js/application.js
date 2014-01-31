@@ -1,3 +1,3 @@
-Jada = Ember.Application.create({
+App = Ember.Application.create({
   LOG_TRANSITIONS: true
 });
