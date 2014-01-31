@@ -15,3 +15,4 @@ pom.xml
 /resources/js/.tern-port
 /log
 /.tern-port
+/jada-web/js/.tern-port
