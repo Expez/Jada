@@ -38,12 +38,14 @@
 
 (defresource parametrized [x]
   :available-media-types ["text/html"]
-  :handle-ok (fn [ctx] (prn-str "Context: " ctx "parameter: " x)))
+  :handle-ok (fn [ctx] (prn-str  "parameter: " x)))
 
 (defroutes app
   #_(ANY "/foo" [] (resource :available-media-types ["text/html"]
                              :handle-ok (fn [ctx] (prn-str "x: " (get-in ctx [:request :params :x])))))
-  (ANY "/foo/:x" [x] (parametrized x)))
+  (ANY "/foo/:x" [x] (parametrized x))  ;This matches localhost/foo/bar/
+  (ANY "/foo" [] (resource :available-media-types ["text/html"]
+                             :handle-ok (fn [_] "hi"))))
 
 (def handler
   (-> app
