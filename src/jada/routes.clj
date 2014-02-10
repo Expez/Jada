@@ -4,7 +4,7 @@
             [jada.food :as food]
             [liberator.core :refer [resource defresource]]))
 
-(defresource foods [name]
+(defresource food [name]
   :allowed-methods [:put :get :delete]
   :available-media-types ["application/json" "text/html " "text/plain"]
   :exists? (fn [_] (food/lookup name))
@@ -19,6 +19,6 @@
   :handle-ok (fn [ctx] (generate-string (food/list-all))))
 
 (defroutes app
-  (ANY "/foods/:name" [name] (foods name))
-  (ANY "/foods" [] (list-all-foods))
+  (ANY "/food/:name" [name] (food name))
+  (ANY "/food" [] (list-all-foods))
   (ANY "*" [] (println "Not found")))
