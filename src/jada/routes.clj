@@ -19,7 +19,7 @@
 
 (defresource list-all-foods []
   :available-media-types ["application/json" "text/html " "text/plain"]
-  :handle-ok (fn [ctx] (generate-string (food/list-all))))
+  :handle-ok (fn [ctx] (generate-string {:foods (food/list-all)})))
 
 (defn render-template [template-file]
    (clostache/render (slurp template-file) nil))
