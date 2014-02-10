@@ -8,7 +8,9 @@
   :allowed-methods [:put :get :delete]
   :available-media-types ["application/json" "text/html " "text/plain"]
   :handle-ok (fn [ctx] (generate-string (food/lookup name)))
-  :put! (fn [ctx] (println (get-in ctx [:request :params]))))
+  :can-put-to-missing true
+  :put! (fn [ctx] (let [f (get-in ctx [:request :params])]
+                    (food/put f))))
 
 (defresource list-all-foods []
   :available-media-types ["application/json" "text/html " "text/plain"]

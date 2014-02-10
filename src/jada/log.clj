@@ -1,7 +1,6 @@
 (ns jada.log
   (:require [clj-time.core :as t]
             [jada.util :as util]
-            [jada.handler :refer :all]
             [jada.food :as f]
             [monger.core :as mg]
             [monger.collection :as mc]
