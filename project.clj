@@ -10,6 +10,7 @@
                  [cheshire "5.3.1"]
                  [com.taoensso/timbre "3.0.0-RC4"]
                  [hiccup "1.0.4"]
+                 [de.ubercode.clostache/clostache "1.3.1"]
                  [com.novemberain/monger "1.7.0"]
                  [org.clojure/tools.trace "0.7.6"]
                  [clj-time "0.6.0"]
