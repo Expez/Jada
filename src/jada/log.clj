@@ -85,11 +85,3 @@ provided the weight of the most recent entry in the log."
 (defn set-bmr [date bmr]
   "Sets the basal metabolic rate in the log, for `date'."
   (assoc-in! date [:bmr] bmr))
-
-(defmethod handle "weight"
-  [{w :weight recipient :recipient}]
-  (let [w (Double/parseDouble w)]
-    (weight w)
-    {:action :replace
-     :value w
-     :recipient recipient}))

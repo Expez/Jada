@@ -21,7 +21,8 @@
   (util/map-vals #(if (number? %) (* amount %) %) food))
 
 (defn insert-food [food]
-  (mc/insert-and-return "foods" food))
+  (mc/insert-and-return "foods"
+                        (util/keep-keys food [:name :kcal :prot :fat :carbs :fiber])))
 
 (defn lookup [name]
   (dissoc (mc/find-one-as-map "foods" {:name name}) :_id ))
@@ -33,14 +34,6 @@
   "Returns f1 - f2"
   (add (util/map-vals #(if (number? %) (* -1 %) "") f2) f1))
 
-(defmethod handle "add food"
-  [{:keys [food]}]
-  (insert-food food))
-
 (defn list-all []
   "Returns a map of all foods in the db"
   (map #(dissoc % :_id) (mc/find-maps "foods")))
-
-(defmethod handle "lookup food"
-  [{:keys [name]}]
-  (lookup name))
