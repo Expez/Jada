@@ -39,3 +39,7 @@
 (defn list-all []
   "Returns a map of all foods in the db"
   (map #(dissoc % :_id) (mc/find-maps "foods")))
+
+(defn delete [name]
+  {:pre [(string? name)]}
+  (mc/remove "foods" {:name name}))
