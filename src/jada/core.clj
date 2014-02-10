@@ -44,4 +44,4 @@
   (mg/connect!)
   (mg/set-db! (mg/get-db "jada"))
   (auto-reload ["src/jada"])
-  (run-jetty #'handler {:port 8081}))
+  (run-jetty #'handler {:port 8000}))

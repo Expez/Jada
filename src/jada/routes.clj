@@ -19,7 +19,6 @@
   :handle-ok (fn [ctx] (generate-string (food/list-all))))
 
 (defroutes app
-  (ANY "/foo" [] (resource :available-media-types ["text/html"]
-                           :handle-ok "<html>Hello, Internet.</html>"))
   (ANY "/foods/:name" [name] (foods name))
-  (ANY "/foods" [] (list-all-foods)))
+  (ANY "/foods" [] (list-all-foods))
+  (ANY "*" [] (println "Not found")))
