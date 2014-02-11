@@ -26,14 +26,31 @@
       </ul>
     </script>
 
-    <script type="text/x-handlebars" id="food">
+    <script type="text/x-handlebars" id="foods">
       <ul>
-        {{#each}}
-        <li>{{name}}</li>
+        {{#each food in controller}}
+        <li>
+          {{#link-to "food" food}}
+          {{food.name}}
+          {{/link-to}}
+        </li>
+        {{else}}
+        No foods
         {{/each}}
       </ul>
+      {{outlet}}
     </script>
 
+    <script type="text/x-handlebars" id="food">
+      <div class="food">
+        <h3> {{name}} </h3>
+        Kcal: {{kcal}}<br>
+        Prot: {{prot}}<br>
+        Fat: {{fat}}<br>
+        Carbs: {{carbs}}<br>
+        Fiber: {{fiber}}<br>
+      </div>
+    </script>
   </head>
   <body>
     <script type="text/x-handlebars">
@@ -53,7 +70,7 @@
               <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Link</a></li>
                 <li><a href="#">Link</a></li>
-                <li>{{#link-to 'food'}}Food{{/link-to}}</li>
+                <li>{{#link-to 'foods'}}Food{{/link-to}}</li>
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                   <ul class="dropdown-menu">
