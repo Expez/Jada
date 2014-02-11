@@ -21,6 +21,12 @@ App.FoodRoute = Ember.Route.extend({
   }
 });
 
+App.FoodEditRoute = Ember.Route.extend({
+  model: function(){
+    return this.modelFor('food');
+  }
+});
+
 App.IndexRoute = Ember.Route.extend({
   model: function() {
     return ['red', 'yellow', 'blue'];

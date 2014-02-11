@@ -13,6 +13,9 @@
     <script src="js/libs/ember-data.js"></script>
     <script src="js/application.js"></script>
     <script src="js/models/food.js"></script>
+    <script src="js/controllers/foodController.js"></script>
+    <script src="js/controllers/foodsController.js"></script>
+    <script src="js/controllers/foodEditController.js"></script>
     <script src="js/router.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
     <!-- to activate the test runner, add the "?test" query string parameter -->
@@ -41,6 +44,29 @@
       {{outlet}}
     </script>
 
+    <script type="text/x-handlebars" id="food/edit">
+      <div class="food-edit">
+        <label>Name</label>
+        {{input value=name}}
+
+        <label>Kcal</label>
+        {{input value=kcal}}
+
+        <label>Prot</label>
+        {{input value=prot}}
+
+        <label>Fat</label>
+        {{input value=fat}}
+
+        <label>Carbs</label>
+        {{input value=carbs}}
+
+        <label>Fiber</label>
+        {{input value=fiber}}
+        <button {{action "save"}}> Save </button>
+      </div>
+    </script>
+
     <script type="text/x-handlebars" id="food">
       <div class="food">
         <h3> {{name}} </h3>
@@ -49,8 +75,11 @@
         Fat: {{fat}}<br>
         Carbs: {{carbs}}<br>
         Fiber: {{fiber}}<br>
+        <button {{action "edit"}}>Edit</button>
       </div>
+      {{outlet}}
     </script>
+
   </head>
   <body>
     <script type="text/x-handlebars">
