@@ -1,6 +1,7 @@
 (ns jada.food
   (:require [jada.util :as util]
-            [monger.collection :as mc]))
+            [monger.collection :as mc]
+            [taoensso.timbre :as timbre :refer [info error]]))
 
 ;;; a food is a map with the following keys: name kcal prot fat carbs fiber
 
@@ -21,12 +22,14 @@
 
 (defn put [food]
   "Add a new food item to the db."
-  {:pre [(map? food)]}
-  (mc/insert-and-return "foods"
-                        (util/keep-keys food [:name :kcal :prot :fat :carbs :fiber])))
+  (if (and (map? food)
+             (= (count (keys food)) 6)
+             (every? #{:name :kcal :fat :prot :carbs :fiber} (keys food)))
+    (info "PUT: " (mc/insert-and-return "foods"
+                                        (util/keep-keys food [:name :kcal :prot :fat :carbs :fiber])))
+    (error "Tried to PUT " food)))
 
 (defn lookup [name]
-  {:pre [(string? name)]}
   (dissoc (mc/find-one-as-map "foods" {:name name}) :_id ))
 
 (defn create [name kcal prot fat carbs fiber]
@@ -41,5 +44,4 @@
   (map #(dissoc % :_id) (mc/find-maps "foods")))
 
 (defn delete [name]
-  {:pre [(string? name)]}
   (mc/remove "foods" {:name name}))

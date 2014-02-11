@@ -29,6 +29,6 @@
 
 (defroutes app
   (route/resources "/" {:root "."})
-  (ANY "/food/:name" [name] (food name))
+  (ANY "/foods/:name" [name] (food name))
   (ANY "/foods" [] (list-all-foods))
   (ANY "*" [] (println "Not found")))
