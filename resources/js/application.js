@@ -14,3 +14,10 @@ App.Store = DS.Store.extend({
     }
   })
 });
+
+App.FoodSerializer = DS.RESTSerializer.extend({
+  normalize: function(type, hash, property) {
+    hash.id = hash.name;
+    return this._super(type, hash, property);
+  }
+});
