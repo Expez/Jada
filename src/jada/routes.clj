@@ -1,6 +1,5 @@
 (ns jada.routes
   (:require [cheshire.core :refer :all]
-            [clostache.parser :as clostache]
             [compojure.core :refer [defroutes ANY]]
             [compojure.route :as route]
             [jada.food :as food]
@@ -21,14 +20,9 @@
   :available-media-types ["application/json" "text/html " "text/plain"]
   :handle-ok (fn [ctx] (generate-string {:foods (food/list-all)})))
 
-(defn render-template [template-file]
-   (clostache/render (slurp template-file) nil))
-
-(defn index []
-  (render-template "jada-web/index.html"))
-
 (defroutes app
-  (route/resources "/" {:root "."})
+  (ANY "/" [] (response/resource-response "index.html" {:root "."}))
   (ANY "/foods/:name" [name] (food name))
   (ANY "/foods" [] (list-all-foods))
+  (route/resources "/" {:root "."})
   (ANY "*" [] (println "Not found")))
