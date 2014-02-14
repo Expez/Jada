@@ -12,8 +12,12 @@
   :exists? (fn [_] (food/lookup name))
   :handle-ok (fn [_] (generate-string (food/lookup name)))
   :can-put-to-missing true
-  :put! (fn [ctx] (let [f (get-in ctx [:request :params])]
-                    (food/put f)))
+  :put! (fn [ctx] (let [food (-> ctx
+                                 (get-in [:request :body])
+                                 slurp
+                                 (parse-string true)
+                                 (:food))]
+                    (food/put food)))
   :delete! (fn [_] (food/delete name)))
 
 (defresource list-all-foods []
