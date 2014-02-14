@@ -20,17 +20,25 @@
 (defn mult [food amount]
   (util/map-vals #(if (number? %) (* amount %) %) food))
 
-(defn put [food]
-  "Add a new food item to the db."
-  (if (and (map? food)
-             (= (count (keys food)) 6)
-             (every? #{:name :kcal :fat :prot :carbs :fiber} (keys food)))
-    (info "PUT: " (mc/insert-and-return "foods"
-                                        (util/keep-keys food [:name :kcal :prot :fat :carbs :fiber])))
-    (error "Tried to PUT " food)))
+(defn- validate-food [food]
+  (and (map? food)
+       (= (count (keys food)) 6)
+       (every? #{:name :kcal :fat :prot :carbs :fiber} (keys food))))
 
 (defn lookup [name]
   (dissoc (mc/find-one-as-map "foods" {:name name}) :_id ))
+
+(defn delete [name]
+  (mc/remove "foods" {:name name}))
+
+(defn put [food]
+  "Add a new food item to the db."
+  (if-not (validate-food food)
+    (error "Tried to PUT " food)
+    (info "PUT: "
+          (when (lookup (:name food))
+            (delete (:name food)))
+          (mc/insert-and-return "foods" food))))
 
 (defn create [name kcal prot fat carbs fiber]
   {:name name :kcal kcal :prot prot :fat fat :carbs carbs :fiber fiber})
@@ -42,6 +50,3 @@
 (defn list-all []
   "Returns a map of all foods in the db"
   (map #(dissoc % :_id) (mc/find-maps "foods")))
-
-(defn delete [name]
-  (mc/remove "foods" {:name name}))
