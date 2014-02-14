@@ -1,4 +1,7 @@
 App.FoodsController = Ember.ArrayController.extend({
   sortProperties: ['name'],
-  sortAscending: false
+  sortAscending: false,
+    create: function(){
+      this.transitionToRoute('foods.create');
+    }
 });

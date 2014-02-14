@@ -32,3 +32,15 @@ App.IndexRoute = Ember.Route.extend({
     return ['red', 'yellow', 'blue'];
   }
 });
+
+App.FoodsCreateRoute = Ember.Route.extend({
+  model: function(){
+    return Em.Object.create({});
+  },
+
+  renderTemplate: function(){
+    this.render('food.edit', {
+      controller: 'foodsCreate'
+    });
+  }
+});
