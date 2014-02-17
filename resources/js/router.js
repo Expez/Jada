@@ -1,7 +1,7 @@
 App.Router.map(function() {
   // this.route("food");
   this.resource('foods', function(){
-    this.resource('food', { path:'/:id' }, function(){
+    this.resource('food', { path:'/:name' }, function(){
       this.route('edit');
     });
     this.route('create');
@@ -17,7 +17,7 @@ App.FoodsRoute = Ember.Route.extend({
 
 App.FoodRoute = Ember.Route.extend({
   model: function(params) {
-    return this.store.find('food', params.id);
+    return this.store.find('food', params.name);
   }
 });
 
