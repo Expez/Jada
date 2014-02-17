@@ -23,7 +23,8 @@
 (defn- validate-food [food]
   (and (map? food)
        (= (count (keys food)) 6)
-       (every? #{:name :kcal :fat :prot :carbs :fiber} (keys food))))
+       (every? #{:name :kcal :fat :prot :carbs :fiber} (keys food))
+       (every? #(not (nil? %)) (vals food))))
 
 (defn lookup [name]
   (dissoc (mc/find-one-as-map "foods" {:name name}) :_id ))
