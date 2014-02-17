@@ -30,7 +30,7 @@
   (dissoc (mc/find-one-as-map "foods" {:name name}) :_id ))
 
 (defn delete [name]
-  (mc/remove "foods" {:name name}))
+  (info "DELETE " name " : " (mc/remove "foods" {:name name})))
 
 (defn put [food]
   "Add a new food item to the db."
