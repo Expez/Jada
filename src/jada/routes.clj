@@ -6,27 +6,32 @@
             [liberator.core :refer [resource defresource]]
             [ring.util.response :as response]))
 
+(defn- put-food! [ctx]
+  (let [food (-> ctx
+                 (get-in [:request :body])
+                 slurp
+                 (parse-string true)
+                 (:food))]
+    (food/put food)))
+
 (defresource food [name]
   :allowed-methods [:put :get :delete]
   :available-media-types ["application/json" "text/html " "text/plain"]
   :exists? (fn [_] (food/lookup name))
   :handle-ok (fn [_] (generate-string (food/lookup name)))
   :can-put-to-missing true
-  :put! (fn [ctx] (let [food (-> ctx
-                                 (get-in [:request :body])
-                                 slurp
-                                 (parse-string true)
-                                 (:food))]
-                    (food/put food)))
+  :put! (fn [ctx] (put-food! ctx))
   :delete! (fn [_] (food/delete name)))
 
-(defresource list-all-foods []
+(defresource foods []
+  :allowed-methods [:post :get]
   :available-media-types ["application/json" "text/html " "text/plain"]
+  :post! (fn [ctx] (put-food! ctx))
   :handle-ok (fn [ctx] (generate-string {:foods (food/list-all)})))
 
 (defroutes app
   (ANY "/" [] (response/resource-response "index.html" {:root "."}))
   (ANY "/foods/:name" [name] (food name))
-  (ANY "/foods" [] (list-all-foods))
+  (ANY "/foods" [] (foods))
   (route/resources "/" {:root "."})
-  (ANY "*" [] (println "Not found")))
+  (ANY "*" [] (println "not found")))

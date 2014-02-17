@@ -1,8 +1,7 @@
 App.FoodsCreateController = Ember.ObjectController.extend({
   actions: {
     save: function(){
-      var food = this.store.createRecord('food', this.get('model'));
-      console.log(food);
+      var food = this.get('model');
       food.save();
 
       this.transitionToRoute('food', food);

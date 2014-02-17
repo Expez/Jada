@@ -9,8 +9,7 @@ App.Store = DS.Store.extend({
       var serializer = store.serializerFor(type.typeKey);
 
       serializer.serializeIntoHash(data, type, record, { includeId: true });
-
-      return this.ajax(this.buildURL(type.typeKey), "PUT", { data: data });
+      return this.ajax(this.buildURL(type.typeKey), "POST", { data: data });
     }
   })
 });

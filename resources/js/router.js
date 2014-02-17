@@ -35,7 +35,7 @@ App.IndexRoute = Ember.Route.extend({
 
 App.FoodsCreateRoute = Ember.Route.extend({
   model: function(){
-    return Em.Object.create({});
+    return this.store.createRecord('food', {});
   },
 
   renderTemplate: function(){
