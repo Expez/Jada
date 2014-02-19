@@ -1,10 +1,15 @@
 App.FoodsCreateController = Ember.ObjectController.extend({
   actions: {
     save: function(){
-      var food = this.get('model');
-      food.save();
-
-      this.transitionToRoute('food', food);
+      var controller = this;
+      function transitionToFood(food) {
+        controller.transitionToRoute('food', food);
+      }
+      function failure(reason) {
+        console.log("Failure in foodsCreateController.js");
+        console.log(reason);
+      }
+      this.get('model').save().then(transitionToFood).catch(failure);
     }
   }
 });
