@@ -1,6 +1,5 @@
 {
   "devDependencies": {
-    "gulp-handlebars": "~1.0.2",
     "gulp-rename": "~1.1.0",
     "gulp-concat": "~2.1.7",
     "gulp-autoprefixer": "0.0.6",
@@ -8,6 +7,7 @@
     "gulp-ruby-sass": "~0.3.0",
     "gulp-jshint": "~1.4.2",
     "gulp-clean": "~0.2.4",
-    "gulp-declare": "~0.1.0"
+    "gulp-declare": "~0.1.0",
+    "gulp-ember-handlebars": "~0.5.1"
   }
 }

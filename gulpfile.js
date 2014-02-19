@@ -6,11 +6,11 @@ var gulp = require('gulp'),
     clean = require('gulp-clean'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
-    handlebars = require('gulp-handlebars'),
+    handlebars = require('gulp-ember-handlebars'),
     declare = require('gulp-declare');
 
 gulp.task('styles', function() {
-  return gulp.src('resoruces/styles/main.scss')
+  return gulp.src('resources/styles/main.scss')
     .pipe(sass({ style: 'expanded' }))
     .pipe(gulp.dest('resources/dist/css'))
     .pipe(notify({ message: 'Styles task complete' }));
@@ -18,7 +18,7 @@ gulp.task('styles', function() {
 
 gulp.task('scripts', function() {
   return gulp.src('resources/js/**/*.js')
-    // .pipe(jshint('.jshintrc'))
+  // .pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter('default'))
     .pipe(concat('main.js'))
     .pipe(gulp.dest('resources/dist/js'))
@@ -31,13 +31,11 @@ gulp.task('clean', function() {
 });
 
 gulp.task('templates', function(){
-  gulp.src(['resources/templates/*.hbs'])
-    .pipe(handlebars())
-    .pipe(declare({
-      namespace: 'App.templates'
-    }))
-    .pipe(concat('templates.js'))
-    .pipe(gulp.dest('dist/js/'));
+  gulp.src(['resources/templates/**/*.hbs'])
+    .pipe(handlebars({
+      outputType: 'browser'
+    })).pipe(concat('templates.js'))
+    .pipe(gulp.dest('resources/dist/js/'));
 });
 
 gulp.task('watch', function() {
@@ -49,6 +47,6 @@ gulp.task('watch', function() {
   gulp.watch('resources/js/**/*.js', ['scripts']);
 
   // Watch image files
-  gulp.watch('resources/templates/**/*.hbs', ['templates']);
+  gulp.watch('resources/templates/**/*hbs', ['templates']);
 
 });

@@ -7,128 +7,18 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
 
-    <script src="js/libs/jquery-1.10.2.js"></script>
-    <script src="js/libs/handlebars-1.1.2.js"></script>
-    <script src="js/libs/ember-1.3.1.js"></script>
-    <script src="js/libs/ember-data.js"></script>
-    <script src="js/application.js"></script>
-    <script src="js/models/food.js"></script>
-    <script src="js/controllers/foodController.js"></script>
-    <script src="js/controllers/foodsController.js"></script>
-    <script src="js/controllers/foodEditController.js"></script>
-    <script src="js/controllers/foodsCreateController.js"></script>
-    <script src="js/router.js"></script>
+    <script src="libs/jquery-1.10.2.js"></script>
+    <script src="libs/handlebars-1.1.2.js"></script>
+    <script src="libs/ember-1.3.1.js"></script>
+    <script src="libs/ember-data.js"></script>
+    <script src="dist/js/main.js"></script>
+    <script src="dist/js/templates.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
     <!-- to activate the test runner, add the "?test" query string parameter -->
     <!-- <script src="tests/runner.js"></script> -->
 
-    <script type="text/x-handlebars" id="index">
-      <ul>
-        {{#each item in model}}
-        <li>{{item}}</li>
-        {{/each}}
-      </ul>
-    </script>
-
-    <script type="text/x-handlebars" id="foods">
-      <ul>
-        {{#each food in controller}}
-        <li>
-          {{#link-to "food" food}}
-          {{food.name}}
-          {{/link-to}}
-        </li>
-        {{else}}
-        No foods
-        {{/each}}
-      </ul>
-        <button {{action "create"}}>New</button>
-      {{outlet}}
-    </script>
-
-    <script type="text/x-handlebars" id="food/edit">
-      <div class="food-edit">
-        <label>Name</label>
-        {{input value=name}}
-
-        <label>Kcal</label>
-        {{input value=kcal}}
-
-        <label>Prot</label>
-        {{input value=prot}}
-
-        <label>Fat</label>
-        {{input value=fat}}
-
-        <label>Carbs</label>
-        {{input value=carbs}}
-
-        <label>Fiber</label>
-        {{input value=fiber}}
-        <button {{action "save"}}> Save </button>
-      </div>
-    </script>
-
-    <script type="text/x-handlebars" id="food">
-      <div class="food">
-        <h3> {{name}} </h3>
-        Kcal: {{kcal}}<br>
-        Prot: {{prot}}<br>
-        Fat: {{fat}}<br>
-        Carbs: {{carbs}}<br>
-        Fiber: {{fiber}}<br>
-        <button {{action "edit"}}>Edit</button>
-        <button {{action "delete"}}> Delete </button>
-      </div>
-      {{outlet}}
-    </script>
-
   </head>
   <body>
-    <script type="text/x-handlebars">
-      <container>
-        <div class="navbar navbar-default" role="navigation">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">Jada</a>
-            </div>
-            <div class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
-                <li>{{#link-to 'foods'}}Food{{/link-to}}</li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li class="dropdown-header">Nav header</li>
-                    <li><a href="#">Separated link</a></li>
-                    <li><a href="#">One more separated link</a></li>
-                  </ul>
-                </li>
-              </ul>
-              <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="./">Default</a></li>
-                <li><a href="../navbar-static-top/">Static top</a></li>
-                <li><a href="../navbar-fixed-top/">Fixed top</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
 
-        {{outlet}}
-
-      </container>
-    </script>
   </body>
-
 </html>
