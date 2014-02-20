@@ -1,13 +1,18 @@
-<ul>
-  {{#each food in controller}}
-    <li>
-      {{#link-to "food" food}}
-        {{food.name}}
-      {{/link-to}}
-    </li>
-    {{else}}
-    No foods
-  {{/each}}
-</ul>
-<button {{action "create"}}>New</button>
-{{outlet}}
+<div class="row">
+  <div class="col-md-2">
+    <ul>
+      {{#each food in controller}}
+        <li>
+          {{#link-to "food" food}}
+            {{food.name}}
+          {{/link-to}}
+        </li>
+        {{else}}
+        No foods
+      {{/each}}
+    </ul>
+    <button {{action "create"}}>New</button>
+  </div>
+  <div class="col-md-10">
+    {{outlet}}
+  </div>
